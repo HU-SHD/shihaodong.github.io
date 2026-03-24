@@ -10,14 +10,22 @@
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
     </script>
-<meta name="description" content="整合自DeepSeek对话和CSDN博客的Git/Gitee新手常见问题及解决方案，共38个问题，覆盖注册、配置、上传、协作、冲突解决等完整场景。">
-<meta property="og:title" content="Git/Gitee新手避坑指南：38个常见问题与解决方案">
-<meta property="og:description" content="整合自DeepSeek对话和CSDN博客的Git/Gitee新手常见问题及解决方案，共38个问题，覆盖注册、配置、上传、协作、冲突解决等完整场景。">
+<meta name="description" content="---
+
+# Git/Gitee新手避坑指南：38个常见问题与解决方案
+
+本文档为 Git/Gitee 新手整理了 38 个常见问题，每个问题均包含**现象描述**、**原因分析**、**解决步骤**及**具体操作案例**。">
+<meta property="og:title" content="GitCommonQuestions">
+<meta property="og:description" content="---
+
+# Git/Gitee新手避坑指南：38个常见问题与解决方案
+
+本文档为 Git/Gitee 新手整理了 38 个常见问题，每个问题均包含**现象描述**、**原因分析**、**解决步骤**及**具体操作案例**。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://HU-SHD.github.io/shihaodong.github.io/post/GitCommonQuestions.html">
 <meta property="og:image" content="https://avatars.githubusercontent.com/u/218474709?v=4&size=64">
-<title>Git/Gitee新手避坑指南：38个常见问题与解决方案</title>
-
+<title>GitCommonQuestions</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
 
 
 </head>
@@ -37,13 +45,21 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 #cmButton{height:48px;margin-top:48px;}
 #comments{margin-top:64px;}
 .g-emoji{font-size:24px;}
-.markdown-body table {display: table; width: 100%;}
-.markdown-body th, .markdown-body td {border: 1px solid var(--color-border-default); padding: 6px 13px;}
 @media (max-width: 600px) {
     body {padding: 8px;}
     .postTitle{font-size:24px;}
 }
-
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
 </style>
 
 
@@ -51,7 +67,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 
 <body>
     <div id="header">
-<h1 class="postTitle">Git/Gitee新手避坑指南：38个常见问题与解决方案</h1>
+<h1 class="postTitle">GitCommonQuestions</h1>
 <div class="title-right">
     <a href="https://HU-SHD.github.io/shihaodong.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
         <svg class="octicon" width="16" height="16">
@@ -59,7 +75,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
         </svg>
     </a>
     
-    <a href="https://github.com/HU-SHD/shihaodong.github.io/issues" target="_blank" class="btn btn-invisible circle" title="Issue">
+    <a href="https://github.com/HU-SHD/shihaodong.github.io/issues/3" target="_blank" class="btn btn-invisible circle" title="Issue">
         <svg class="octicon" width="16" height="16">
             <path id="pathIssue" fill-rule="evenodd"></path>
         </svg>
@@ -75,248 +91,1120 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 </div>
     <div id="content">
-<div class="markdown-body" id="postBody"><p>本文档整合自DeepSeek对话和CSDN博客的Git/Gitee新手常见问题，共38个问题，覆盖注册、配置、上传、协作、冲突解决等完整场景。</p>
-<h2>第一部分：注册与账号基础问题</h2>
-<h3>问题1：Gitee/GitHub注册时收不到验证邮件</h3>
-<p><strong>现象</strong>：注册后邮箱一直收不到验证邮件。<br />
-<strong>原因</strong>：邮件被拦截、邮箱地址填写错误或平台发送延迟。<br />
-<strong>解决步骤</strong>：检查垃圾邮件箱；确认邮箱地址无误；更换邮箱（如QQ邮箱换成163邮箱）；等待几分钟后重新发送验证邮件。</p>
-<h3>问题2：如何添加SSH公钥到Gitee/GitHub？</h3>
-<p><strong>解决步骤</strong>：<br />
-1. 生成SSH密钥（如未生成）：<code>ssh-keygen -t rsa -C &quot;你的邮箱&quot;</code><br />
-2. 查看公钥：<code>cat ~/.ssh/id_rsa.pub</code>（Windows在<code>C:\Users\用户名\.ssh\id_rsa.pub</code>）<br />
-3. 复制输出内容，进入Gitee/GitHub“设置”→“SSH公钥”，粘贴并确认。</p>
-<h3>问题3：配置多个Git账号（个人和公司）如何区分？</h3>
-<p><strong>解决步骤</strong>：<br />
-1. 生成不同名称的密钥：<code>ssh-keygen -t rsa -f ~/.ssh/id_rsa_personal -C &quot;个人邮箱&quot;</code><br />
-2. 配置<code>~/.ssh/config</code>文件：<br />
-<code>Host gitee.com-personal
-    HostName gitee.com
-    User git
-    IdentityFile ~/.ssh/id_rsa_personal</code><br />
-3. 克隆时使用别名：<code>git clone git@gitee.com-personal:用户名/仓库名.git</code></p>
-<h3>问题28：生成SSH密钥时提示“Saving key failed: No such file or directory”</h3>
-<p><strong>现象</strong>：执行<code>ssh-keygen -t rsa -C &quot;你的邮箱&quot;</code>后，终端提示：<code>Saving key &quot;//.ssh/id_rsa&quot; failed: No such file or directory</code><br />
-<strong>原因</strong>：当前用户主目录下没有.ssh文件夹，且命令无法自动创建该目录。<br />
-<strong>解决步骤</strong>：<br />
-1. 手动创建.ssh目录：<code>mkdir ~/.ssh</code><br />
-2. 重新执行密钥生成命令，一路回车即可。</p>
-<h3>问题29：配置Git时提示“could not lock config file”或“Permission denied”</h3>
-<p><strong>现象</strong>：执行<code>git config --global user.name &quot;xxx&quot;</code>时报错。<br />
-<strong>原因</strong>：<code>.gitconfig</code>文件路径不存在或环境变量错误，或当前用户对Git安装目录无写入权限。<br />
-<strong>解决步骤</strong>：<br />
-1. 检查环境变量<code>HOME</code>或<code>USERPROFILE</code>是否正确指向用户主目录。<br />
-2. 以管理员身份运行Git Bash，或修改<code>.gitconfig</code>所在目录的权限。</p>
-<h2>第二部分：准备工作阶段</h2>
-<h3>问题4：初次使用Git需要配置什么？</h3>
-<p><strong>解决步骤</strong>：<br />
-<code>git config --global user.name &quot;你的用户名&quot;
-git config --global user.email &quot;你的邮箱&quot;</code><br />
-可通过<code>git config --list</code>查看所有配置。</p>
-<h3>问题5：如何初始化本地仓库并关联远程仓库？</h3>
-<p><strong>解决步骤</strong>：<br />
-1. <code>git init</code>  # 初始化本地仓库<br />
-2. <code>git remote add origin &lt;远程仓库地址&gt;</code>  # 关联远程仓库<br />
-3. <code>git remote -v</code>  # 验证关联</p>
-<h2>第三部分：代码上传核心问题</h2>
-<h3>问题6：git push时报错“failed to push some refs to ...”</h3>
-<p><strong>现象</strong>：<code>git push</code>失败，提示远程包含本地没有的更新。<br />
-<strong>原因</strong>：远程仓库有本地没有的提交（例如远程有README.md）。<br />
-<strong>解决步骤</strong>：<br />
-1. <code>git pull --rebase origin master</code>  # 拉取远程更新并变基<br />
-2. 如有冲突，解决后<code>git add .</code> → <code>git rebase --continue</code><br />
-3. <code>git push origin master</code></p>
-<h3>问题7：如何将本地已有项目上传到新建的空仓库？</h3>
-<p><strong>解决步骤</strong>：<br />
-1. 进入项目目录：<code>cd 项目文件夹</code><br />
-2. <code>git init</code><br />
-3. <code>git add .</code><br />
-4. <code>git commit -m &quot;first commit&quot;</code><br />
-5. <code>git remote add origin &lt;仓库地址&gt;</code><br />
-6. <code>git push -u origin master</code></p>
-<h3>问题8：git add后想撤销怎么办？</h3>
-<p><strong>解决步骤</strong>：<br />
-- 撤销所有暂存：<code>git reset HEAD .</code><br />
-- 撤销指定文件：<code>git reset HEAD 文件名</code><br />
-- 放弃工作区修改：<code>git checkout -- 文件名</code>（危险操作，会丢失未暂存的修改）</p>
-<h3>问题9：如何修改最后一次commit的备注？</h3>
-<p><strong>解决步骤</strong>：<br />
-<code>git commit --amend -m &quot;新的备注信息&quot;</code><br />
-如果已经push，需要强制推送：<code>git push -f origin master</code>（慎用，团队协作时避免强制推送）</p>
-<h3>问题10：误提交了大文件或敏感信息，如何从历史中彻底删除？</h3>
-<p><strong>解决步骤</strong>：<br />
-1. <code>git filter-branch --tree-filter &#39;rm -f 文件名&#39; HEAD</code><br />
-2. <code>git push origin --force --all</code><br />
-（推荐使用<code>BFG Repo-Cleaner</code>工具，效率更高）</p>
-<h3>问题30：执行git push时提示“remote origin already exists”</h3>
-<p><strong>现象</strong>：添加远程仓库时，执行<code>git remote add origin &lt;仓库地址&gt;</code>报错：<code>error: remote origin already exists.</code><br />
-<strong>原因</strong>：本地已经配置过名为origin的远程仓库地址。<br />
-<strong>解决步骤</strong>：<br />
-1. 查看现有远程仓库：<code>git remote -v</code><br />
-2. 删除原有origin：<code>git remote rm origin</code><br />
-3. 重新添加正确的远程地址：<code>git remote add origin &lt;新地址&gt;</code></p>
-<h3>问题31：git add时提示“warning: LF will be replaced by CRLF”</h3>
-<p><strong>现象</strong>：在Windows上执行<code>git add</code>时，终端输出换行符警告。<br />
-<strong>原因</strong>：Windows使用CRLF换行符，Linux/macOS使用LF换行符。Git默认在提交时进行转换。<br />
-<strong>解决步骤</strong>：<br />
-<code>git config --global core.autocrlf true</code>  # Windows用户设置自动转换<br />
-如果想禁用自动转换：<code>git config --global core.autocrlf false</code></p>
-<h3>问题32：本地分支名与远程分支名不一致（main vs master）</h3>
-<p><strong>现象</strong>：<code>git push</code>时报错，提示找不到对应的远程分支。<br />
-<strong>原因</strong>：Git新版本默认分支名为main，但远程仓库可能使用master，或者反之。<br />
-<strong>解决步骤</strong>：<br />
-1. 查看当前分支：<code>git branch</code><br />
-2. 本地重命名分支：<code>git branch -m main master</code><br />
-3. 推送并设置上游：<code>git push -u origin master</code></p>
-<h2>第四部分：分支与协作问题</h2>
-<h3>问题11：如何创建并切换分支？</h3>
-<p><strong>解决步骤</strong>：<br />
-<code>git checkout -b 新分支名</code>  # 创建并切换<br />
-或<br />
-<code>git branch 分支名</code> → <code>git checkout 分支名</code></p>
-<h3>问题12：如何合并分支并解决冲突？</h3>
-<p><strong>解决步骤</strong>：<br />
-1. 切换到目标分支：<code>git checkout main</code><br />
-2. 合并：<code>git merge feature-branch</code><br />
-3. 出现冲突时，手动编辑冲突文件，删除<code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>等标记，保留最终内容。<br />
-4. <code>git add .</code> → <code>git commit -m &quot;merge conflict resolved&quot;</code><br />
-5. 推送：<code>git push</code></p>
-<h3>问题13：误删了分支能恢复吗？</h3>
-<p><strong>解决步骤</strong>：<br />
-1. <code>git reflog</code>  # 查看所有历史操作记录<br />
-2. 找到被删分支的最后一次commit哈希值<br />
-3. <code>git checkout -b 恢复的分支名 &lt;commit哈希&gt;</code></p>
-<h3>问题33：本地有未提交的修改，如何拉取远程更新而不丢失本地改动？</h3>
-<p><strong>解决步骤</strong>：<br />
-1. <code>git stash</code>          # 暂存所有未提交的更改<br />
-2. <code>git pull</code>           # 拉取远程更新<br />
-3. <code>git stash pop</code>      # 恢复本地修改<br />
-如果恢复时产生冲突，手动解决后<code>git add &lt;冲突文件&gt;</code> → <code>git stash drop</code></p>
-<h3>问题34：执行git pull --rebase后进入卡死或中断状态</h3>
-<p><strong>现象</strong>：执行<code>git pull --rebase origin master</code>后，提示文件冲突或文件被占用，无法继续，状态显示为<code>(master|REBASE 1/1)</code>。<br />
-<strong>原因</strong>：远程和本地有冲突，且存在文件被其他程序占用（如PPT文件被PowerPoint打开）。<br />
-<strong>解决步骤</strong>：<br />
-1. 关闭占用文件的程序（如关闭所有Office软件、图片查看器）<br />
-2. 中止rebase：<code>git rebase --abort</code><br />
-3. 改用普通pull合并：<code>git pull origin master --allow-unrelated-histories</code><br />
-4. 解决冲突后提交并推送</p>
-<h3>问题35：执行git rebase --abort失败，提示文件会被覆盖</h3>
-<p><strong>现象</strong>：在rebase卡住时执行<code>git rebase --abort</code>，提示文件会被覆盖。<br />
-<strong>解决步骤</strong>：<br />
-1. 备份冲突文件：将提示的文件复制到其他目录<br />
-2. 删除或移动这些文件：<code>rm &lt;文件名&gt;</code><br />
-3. 重新执行中止：<code>git rebase --abort</code><br />
-4. 恢复备份文件（如有需要）</p>
-<h2>第五部分：Gitee特有功能问题</h2>
-<h3>问题14：Gitee Pages服务如何开启？</h3>
-<p><strong>解决步骤</strong>：进入仓库→“服务”→“Gitee Pages”→选择分支和部署目录→点击“启动”。<br />
-<strong>注意</strong>：需实名认证，且仓库公开；静态文件需在指定目录（如<code>docs</code>或根目录）。</p>
-<h3>问题15：如何为Gitee仓库设置只读/协作权限？</h3>
-<p><strong>解决步骤</strong>：仓库“管理”→“仓库成员管理”→“添加成员”→选择权限级别（管理员、写、读）。<br />
-<strong>注意</strong>：私有仓库需手动添加协作者才能访问。</p>
-<h2>第六部分：Git基础操作混淆问题</h2>
-<h3>问题16：git fetch和git pull的区别是什么？</h3>
-<p><strong>解释</strong>：<br />
-- <code>git fetch</code>：只下载远程更新到本地仓库，不合并到工作区。<br />
-- <code>git pull</code>：相当于<code>git fetch</code> + <code>git merge</code>，直接拉取并合并到当前分支。</p>
-<h3>问题17：git merge和git rebase的区别？</h3>
-<p><strong>解释</strong>：<br />
-- <code>merge</code>：保留完整历史，产生一个合并commit。<br />
-- <code>rebase</code>：将当前分支的提交“变基”到目标分支上，使历史更线性。<br />
-<strong>原则</strong>：公共分支用merge，个人分支用rebase保持整洁。</p>
-<h3>问题18：git reset和git revert的区别？</h3>
-<p><strong>解释</strong>：<br />
-- <code>reset</code>：回退版本，改变历史（本地未推送时可用，推送后慎用）。<br />
-- <code>revert</code>：创建一个新的反向提交来撤销之前的修改，安全且不破坏历史（适合已推送的提交）。</p>
-<h3>问题19：如何克隆指定分支？</h3>
-<p><strong>解决步骤</strong>：<br />
-<code>git clone -b 分支名 &lt;仓库地址&gt;</code></p>
-<h2>第七部分：环境与协作细节问题</h2>
-<h3>问题20：git commit后想撤销，但保留修改怎么办？</h3>
-<p><strong>解决步骤</strong>：<br />
-<code>git reset --soft HEAD~1</code>  # 撤销commit，但保留暂存区和工作区修改<br />
-<code>git reset --mixed HEAD~1</code> # 撤销commit和暂存，保留工作区修改（默认）<br />
-<code>git reset --hard HEAD~1</code>  # 完全撤销，丢失所有修改（慎用）</p>
-<h3>问题21：git push时提示“error: src refspec master does not match any”</h3>
-<p><strong>原因</strong>：本地没有commit过任何内容，或分支名不正确。<br />
-<strong>解决步骤</strong>：先执行<code>git commit -m &quot;message&quot;</code>，再推送；或检查分支名是否正确。</p>
-<h3>问题22：git push时提示“fatal: 'origin' does not appear to be a git repository”</h3>
-<p><strong>原因</strong>：没有关联远程仓库，或origin名称不正确。<br />
-<strong>解决步骤</strong>：<code>git remote add origin &lt;仓库地址&gt;</code> 关联后重新推送。</p>
-<h3>问题23：如何删除远程仓库的文件但保留本地？</h3>
-<p><strong>解决步骤</strong>：<br />
-1. <code>git rm --cached 文件名</code>  # 从暂存区删除<br />
-2. <code>git commit -m &quot;remove file from remote&quot;</code><br />
-3. <code>git push origin master</code></p>
-<h3>问题24：git clone很慢怎么办？</h3>
-<p><strong>解决步骤</strong>：<br />
-- 使用镜像：<code>git clone https://gitee.com/用户名/仓库名.git</code>（国内Gitee）<br />
-- GitHub可使用代理或<code>git clone --depth 1</code>浅克隆（只拉取最新版本）<br />
-- 配置Git代理：<code>git config --global http.proxy http://127.0.0.1:7890</code></p>
-<h2>第八部分：平台功能易忽略点</h2>
-<h3>问题25：Gitee/GitHub的Issue和PR有什么区别？</h3>
-<p><strong>解释</strong>：<br />
-- Issue：问题讨论、Bug反馈、功能建议。<br />
-- PR (Pull Request)：代码变更请求，用于贡献代码或团队代码审查。</p>
-<h3>问题26：如何通过Git命令行给远程仓库打标签？</h3>
-<p><strong>解决步骤</strong>：<br />
-<code>git tag -a v1.0.0 -m &quot;版本说明&quot;</code><br />
-<code>git push origin v1.0.0</code>  # 推送指定标签<br />
-<code>git push origin --tags</code>   # 推送所有标签</p>
-<h3>问题27：误推送敏感信息到公开仓库怎么办？</h3>
-<p><strong>紧急处理</strong>：<br />
-1. 立即修改泄露的密码/密钥<br />
-2. 使用<code>git filter-branch</code>或BFG工具彻底删除历史中的敏感文件<br />
-3. <code>git push --force</code>覆盖远程历史<br />
-4. 联系平台支持，确认是否需要进一步处理</p>
-<h2>第九部分：远程仓库补充问题</h2>
-<h3>问题36：git push时报错“fatal: Unable to find remote helper for 'https'”</h3>
-<p><strong>现象</strong>：执行<code>git push</code>时报错<code>fatal: Unable to find remote helper for 'https'</code>。<br />
-<strong>原因</strong>：Git安装不完整，缺少HTTPS协议支持模块。<br />
-<strong>解决步骤</strong>：<br />
-重新安装Git，安装时勾选“Git from the command line and also from 3rd-party software”和“Use the OpenSSL library”。</p>
-<h3>问题37：git push时提示“fatal: the remote end hung up unexpectedly”或“Broken pipe”</h3>
-<p><strong>现象</strong>：推送大文件或较多文件时出现<code>Write failed: Broken pipe</code>。<br />
-<strong>原因</strong>：推送的数据量过大，超过Git的默认缓冲区限制。<br />
-<strong>解决步骤</strong>：<br />
-<code>git config --global http.postBuffer 524288000</code>  # 设置为500MB<br />
-（SSH方式可配置keep-alive：<code>~/.ssh/config</code>添加<code>ServerAliveInterval 60</code>）</p>
-<h2>第十部分：教学场景补充</h2>
-<h3>问题38：如何在课堂/团队中有效教授Git基础？</h3>
-<p><strong>讲课建议</strong>：<br />
-1. 用故事贯穿全场：用“论文_最终版.doc”的痛点引入版本控制概念。<br />
-2. 区分Git与托管平台：反复强调Git是本地工具，GitHub/Gitee是云端仓库。<br />
-3. Live Demo优先：现场演示<code>init→add→commit→push</code>完整流程。<br />
-4. 准备“翻车”案例：故意制造冲突或推送失败，演示如何解决。</p>
-<p><strong>PPT大纲要点</strong>：<br />
-- 第1-2页：痛点导入（论文命名地狱）<br />
-- 第3-4页：Git vs GitHub/Gitee对比图<br />
-- 第5-6页：工作区→暂存区→仓库的流程图<br />
-- 第7-8页：核心命令演示（init/status/add/commit/log/push）<br />
-- 第9-10页：分支管理与合并冲突解决<br />
-- 第11-12页：常见错误及急救方法<br />
-- 第13页：实战演练（让学员亲手完成第一次commit和push）</p>
-<hr />
-<h2>整合后的完整问题清单</h2>
-<table>
+<div class="markdown-body" id="postBody"><hr>
+<h1>Git/Gitee新手避坑指南：38个常见问题与解决方案</h1>
+<p>本文档为 Git/Gitee 新手整理了 38 个常见问题，每个问题均包含<strong>现象描述</strong>、<strong>原因分析</strong>、<strong>解决步骤</strong>及<strong>具体操作案例</strong>。案例中的操作过程以命令和输出形式呈现，便于读者对照自身情况。</p>
+<markdown-accessiblity-table><table role="table">
 <thead>
-<tr><th>类别</th><th>问题编号</th><th>数量</th></tr>
+<tr>
+<th>序号</th>
+<th>类别</th>
+<th>问题描述</th>
+</tr>
 </thead>
 <tbody>
-<tr><td>注册与账号基础问题</td><td>1-3, 28-29</td><td>5</td></tr>
-<tr><td>准备工作阶段</td><td>4-5</td><td>2</td></tr>
-<tr><td>代码上传核心问题</td><td>6-10, 30-32</td><td>8</td></tr>
-<tr><td>分支与协作</td><td>11-13, 33-35</td><td>7</td></tr>
-<tr><td>Gitee特有功能</td><td>14-15</td><td>2</td></tr>
-<tr><td>Git基础操作混淆</td><td>16-19</td><td>4</td></tr>
-<tr><td>环境与协作细节</td><td>20-24</td><td>5</td></tr>
-<tr><td>平台功能易忽略点</td><td>25-27</td><td>3</td></tr>
-<tr><td>远程仓库补充</td><td>36-37</td><td>2</td></tr>
-<tr><td>教学场景</td><td>38</td><td>1</td></tr>
+<tr>
+<td>1</td>
+<td>注册与账号</td>
+<td>注册时收不到验证邮件</td>
+</tr>
+<tr>
+<td>2</td>
+<td>注册与账号</td>
+<td>忘记 Gitee 登录密码</td>
+</tr>
+<tr>
+<td>3</td>
+<td>注册与账号</td>
+<td>修改用户名后本地仓库无法推送</td>
+</tr>
+<tr>
+<td>4</td>
+<td>注册与账号</td>
+<td>生成 SSH 密钥失败</td>
+</tr>
+<tr>
+<td>5</td>
+<td>注册与账号</td>
+<td>配置 Git 时权限或路径错误</td>
+</tr>
+<tr>
+<td>6</td>
+<td>准备工作</td>
+<td>安装 Git 后右键无“Git Bash Here”</td>
+</tr>
+<tr>
+<td>7</td>
+<td>准备工作</td>
+<td>邮箱填错导致头像和贡献度不显示</td>
+</tr>
+<tr>
+<td>8</td>
+<td>代码上传</td>
+<td>SSH 密钥配置失败</td>
+</tr>
+<tr>
+<td>9</td>
+<td>代码上传</td>
+<td>首次推送 src refspec 错误</td>
+</tr>
+<tr>
+<td>10</td>
+<td>代码上传</td>
+<td>推送被拒（远程有更新）</td>
+</tr>
+<tr>
+<td>11</td>
+<td>代码上传</td>
+<td>HTTPS 推送认证失败</td>
+</tr>
+<tr>
+<td>12</td>
+<td>代码上传</td>
+<td>分支被保护无法推送</td>
+</tr>
+<tr>
+<td>13</td>
+<td>代码上传</td>
+<td>remote origin already exists</td>
+</tr>
+<tr>
+<td>14</td>
+<td>代码上传</td>
+<td>LF 将被 CRLF 替换警告</td>
+</tr>
+<tr>
+<td>15</td>
+<td>代码上传</td>
+<td>本地分支名与远程不一致</td>
+</tr>
+<tr>
+<td>16</td>
+<td>分支与协作</td>
+<td>git pull 后合并冲突</td>
+</tr>
+<tr>
+<td>17</td>
+<td>分支与协作</td>
+<td>提交到了错误分支</td>
+</tr>
+<tr>
+<td>18</td>
+<td>分支与协作</td>
+<td>撤销已推送的提交</td>
+</tr>
+<tr>
+<td>19</td>
+<td>分支与协作</td>
+<td>本地有未提交修改时拉取</td>
+</tr>
+<tr>
+<td>20</td>
+<td>分支与协作</td>
+<td>git pull --rebase 卡死</td>
+</tr>
+<tr>
+<td>21</td>
+<td>分支与协作</td>
+<td>git rebase --abort 失败</td>
+</tr>
+<tr>
+<td>22</td>
+<td>Gitee 特有</td>
+<td>保护分支下如何提交</td>
+</tr>
+<tr>
+<td>23</td>
+<td>Gitee 特有</td>
+<td>Gitee Pages 样式丢失或 404</td>
+</tr>
+<tr>
+<td>24</td>
+<td>Git 基础</td>
+<td>git add 与 commit 混淆</td>
+</tr>
+<tr>
+<td>25</td>
+<td>Git 基础</td>
+<td>.gitignore 不生效</td>
+</tr>
+<tr>
+<td>26</td>
+<td>Git 基础</td>
+<td>提交后漏文件或信息错误</td>
+</tr>
+<tr>
+<td>27</td>
+<td>Git 基础</td>
+<td>撤销已推送提交（revert）</td>
+</tr>
+<tr>
+<td>28</td>
+<td>环境细节</td>
+<td>每次推送都要输入密码</td>
+</tr>
+<tr>
+<td>29</td>
+<td>环境细节</td>
+<td>换行符导致文件被标记修改</td>
+</tr>
+<tr>
+<td>30</td>
+<td>环境细节</td>
+<td>中文文件名乱码</td>
+</tr>
+<tr>
+<td>31</td>
+<td>环境细节</td>
+<td>同步 Fork 仓库</td>
+</tr>
+<tr>
+<td>32</td>
+<td>环境细节</td>
+<td>为他人项目贡献代码（PR）</td>
+</tr>
+<tr>
+<td>33</td>
+<td>平台细节</td>
+<td>创建仓库时选项如何选择</td>
+</tr>
+<tr>
+<td>34</td>
+<td>平台细节</td>
+<td>仓库容量超限移除大文件</td>
+</tr>
+<tr>
+<td>35</td>
+<td>平台细节</td>
+<td>Gitee Pages 绑定自定义域名</td>
+</tr>
+<tr>
+<td>36</td>
+<td>远程补充</td>
+<td>缺少 HTTPS helper</td>
+</tr>
+<tr>
+<td>37</td>
+<td>远程补充</td>
+<td>推送时 Broken pipe</td>
+</tr>
 </tbody>
-</table>
-<p>以上内容整合自：<a href="https://chat.deepseek.com/share/yz3a74txsi6part0dj">DeepSeek分享对话</a> 及CSDN相关博客，旨在帮助Git/Gitee新手快速上手并避开常见坑点。</p>
-</div>
+</table></markdown-accessiblity-table>
+<hr>
+<h2>第一部分：注册与账号基础问题</h2>
+<h3>问题1：注册时收不到验证邮件</h3>
+<p><strong>现象</strong><br>
+用户在 Gitee 官网填写用户名、邮箱、密码后点击注册，但邮箱未收到激活邮件。</p>
+<p><strong>原因</strong></p>
+<ul>
+<li>邮件被误判为垃圾邮件。</li>
+<li>使用了延迟较高的企业邮箱。</li>
+<li>网络波动导致发送延迟。</li>
+</ul>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>检查邮箱的“垃圾邮件”文件夹。</li>
+<li>若未找到，返回登录页点击“重新发送激活邮件”。</li>
+<li>更换为常用邮箱（如 QQ 邮箱、163 邮箱、Gmail）重新注册。</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户使用公司邮箱 <code class="notranslate">user@company.com</code> 注册 Gitee，点击“注册”后未收到邮件。</li>
+<li>打开邮箱“垃圾邮件”文件夹，发现激活邮件，点击链接激活成功。</li>
+<li>若垃圾箱仍无邮件，用户返回登录页点击“重新发送激活邮件”，等待 10 分钟后仍未收到。</li>
+<li>改用 QQ 邮箱 <code class="notranslate">user@qq.com</code> 重新注册，立即收到邮件并成功激活。</li>
+</ol>
+<hr>
+<h3>问题2：忘记了 Gitee 登录密码</h3>
+<p><strong>现象</strong><br>
+用户尝试登录 Gitee 时提示密码错误，无法登录。</p>
+<p><strong>原因</strong><br>
+长时间未登录或密码记忆模糊。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>在登录页点击“忘记密码”。</li>
+<li>输入绑定的邮箱或用户名。</li>
+<li>前往邮箱点击重置链接，设置新密码。</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户输入用户名 <code class="notranslate">developer</code> 后提示密码错误，点击“忘记密码”。</li>
+<li>输入注册邮箱 <code class="notranslate">developer@163.com</code>，Gitee 发送重置邮件。</li>
+<li>用户登录邮箱，点击邮件中的重置链接，输入新密码 <code class="notranslate">Dev@2025</code> 并确认。</li>
+<li>返回登录页，使用新密码登录成功。</li>
+</ol>
+<hr>
+<h3>问题3：修改 Gitee 用户名后，本地仓库无法推送</h3>
+<p><strong>现象</strong><br>
+用户在 Gitee 设置中修改了用户名，之后执行 <code class="notranslate">git push</code> 时出现认证失败或找不到仓库的错误。</p>
+<p><strong>原因</strong><br>
+本地仓库的远程 URL 仍包含旧用户名，需要更新。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>查看当前远程地址：<code class="notranslate">git remote -v</code></li>
+<li>修改远程 URL：<code class="notranslate">git remote set-url origin 新地址</code></li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户将 Gitee 用户名从 <code class="notranslate">olduser</code> 改为 <code class="notranslate">newuser</code>。</li>
+<li>在本地仓库执行 <code class="notranslate">git push</code>，报错：
+<pre class="notranslate"><code class="notranslate">remote: Invalid username or password.
+fatal: Authentication failed for 'https://gitee.com/olduser/my-project.git/'
+</code></pre>
+</li>
+<li>执行 <code class="notranslate">git remote -v</code>，输出：
+<pre class="notranslate"><code class="notranslate">origin  https://gitee.com/olduser/my-project.git (fetch)
+origin  https://gitee.com/olduser/my-project.git (push)
+</code></pre>
+</li>
+<li>更新远程地址：<br>
+<code class="notranslate">git remote set-url origin https://gitee.com/newuser/my-project.git</code></li>
+<li>再次推送，输入正确凭据后成功。</li>
+</ol>
+<hr>
+<h3>问题4：生成 SSH 密钥时提示“Saving key failed: No such file or directory”</h3>
+<p><strong>现象</strong><br>
+执行 <code class="notranslate">ssh-keygen -t rsa -C "邮箱"</code> 后，终端提示：</p>
+<pre class="notranslate"><code class="notranslate">Saving key "//.ssh/id_rsa" failed: No such file or directory
+</code></pre>
+<p><strong>原因</strong><br>
+当前用户主目录下不存在 <code class="notranslate">.ssh</code> 文件夹，且命令无法自动创建。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>手动创建 <code class="notranslate">.ssh</code> 目录：<code class="notranslate">mkdir ~/.ssh</code></li>
+<li>重新执行密钥生成命令，一路回车。</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户执行 <code class="notranslate">ssh-keygen -t rsa -C "user@example.com"</code>，输出上述错误。</li>
+<li>执行 <code class="notranslate">mkdir ~/.ssh</code> 创建目录。</li>
+<li>再次执行 <code class="notranslate">ssh-keygen -t rsa -C "user@example.com"</code>，成功生成密钥。</li>
+</ol>
+<hr>
+<h3>问题5：配置 Git 时提示“could not lock config file”或“Permission denied”</h3>
+<p><strong>现象</strong><br>
+执行 <code class="notranslate">git config --global user.name "用户名"</code> 时报错：</p>
+<pre class="notranslate"><code class="notranslate">error: could not lock config file D:/xxx/.gitconfig: No such file or directory
+</code></pre>
+<p>或</p>
+<pre class="notranslate"><code class="notranslate">error: could not lock config file D:/Git/.gitconfig: Permission denied
+</code></pre>
+<p><strong>原因</strong></p>
+<ul>
+<li>第一种：<code class="notranslate">.gitconfig</code> 文件路径不存在或环境变量配置错误。</li>
+<li>第二种：当前用户对 Git 安装目录无写入权限。</li>
+</ul>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>对于路径不存在：检查环境变量 <code class="notranslate">HOME</code> 或 <code class="notranslate">USERPROFILE</code> 是否正确指向用户主目录。</li>
+<li>对于权限问题：以管理员身份运行 Git Bash，或修改 <code class="notranslate">.gitconfig</code> 所在目录的权限。</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户执行 <code class="notranslate">git config --global user.name "developer"</code>，报错：<br>
+<code class="notranslate">error: could not lock config file D:/Git/.gitconfig: Permission denied</code></li>
+<li>右键 Git Bash 图标，选择“以管理员身份运行”。</li>
+<li>重新执行配置命令，成功。</li>
+</ol>
+<hr>
+<h2>第二部分：准备工作阶段</h2>
+<h3>问题6：安装 Git 后，右键找不到“Git Bash Here”</h3>
+<p><strong>现象</strong><br>
+Windows 系统安装 Git 后，在文件夹右键菜单中未出现“Git Bash Here”选项。</p>
+<p><strong>原因</strong><br>
+安装时未勾选“Windows Explorer integration”选项。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>重新运行 Git 安装包。</li>
+<li>选择“Modify”，在组件列表中勾选“Git Bash Here”和“Git GUI Here”。</li>
+<li>完成安装。</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户从官网下载 Git 安装包并默认安装。</li>
+<li>在桌面新建文件夹 <code class="notranslate">project</code>，右键菜单无“Git Bash Here”。</li>
+<li>重新运行安装程序，进入“Select Components”界面，展开“Windows Explorer integration”，勾选“Git Bash Here”和“Git GUI Here”。</li>
+<li>完成安装后，右键菜单中正常显示“Git Bash Here”。</li>
+</ol>
+<hr>
+<h3>问题7：配置 Git 用户信息时邮箱填错，导致 Gitee 头像和贡献度不显示</h3>
+<p><strong>现象</strong><br>
+代码推送后，Gitee 仓库提交记录中用户头像为默认灰色，且贡献度未增加。</p>
+<p><strong>原因</strong><br>
+本地 Git 配置的邮箱与 Gitee 账号绑定的邮箱不一致。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>检查当前配置：<code class="notranslate">git config user.email</code></li>
+<li>修改为 Gitee 绑定的邮箱：<code class="notranslate">git config --global user.email "正确的邮箱"</code></li>
+<li>修复历史提交（可选）：
+<ul>
+<li>修改最后一次提交：<code class="notranslate">git commit --amend --reset-author -m "新信息"</code></li>
+<li>强制推送（确保分支仅本人使用）：<code class="notranslate">git push --force</code></li>
+</ul>
+</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户本地配置：
+<pre class="notranslate"><code class="notranslate">git config --global user.name "developer"
+git config --global user.email "dev@personal.com"
+</code></pre>
+</li>
+<li>推送后 Gitee 提交记录显示未关联用户。</li>
+<li>登录 Gitee，在“设置”-&gt;“邮箱管理”中确认注册邮箱为 <code class="notranslate">dev@company.com</code>。</li>
+<li>修改本地配置：<br>
+<code class="notranslate">git config --global user.email "dev@company.com"</code></li>
+<li>修正最后一次提交：<br>
+<code class="notranslate">git commit --amend --reset-author -m "修正作者邮箱"</code></li>
+<li>强制推送：<code class="notranslate">git push --force</code></li>
+<li>头像和贡献度正常显示。</li>
+</ol>
+<hr>
+<h2>第三部分：代码上传核心问题</h2>
+<h3>问题8：SSH 密钥配置失败，克隆时报错 Permission denied (publickey)</h3>
+<p><strong>现象</strong><br>
+执行 <code class="notranslate">git clone git@gitee.com:用户名/仓库名.git</code> 时返回：</p>
+<pre class="notranslate"><code class="notranslate">git@gitee.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+</code></pre>
+<p><strong>原因</strong></p>
+<ul>
+<li>未生成 SSH 密钥。</li>
+<li>公钥未添加到 Gitee。</li>
+<li>私钥权限设置不当。</li>
+</ul>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>检查 SSH 密钥：<code class="notranslate">ls -al ~/.ssh</code></li>
+<li>生成新密钥：<code class="notranslate">ssh-keygen -t rsa -b 4096 -C "邮箱"</code></li>
+<li>复制公钥：<code class="notranslate">cat ~/.ssh/id_rsa.pub</code></li>
+<li>登录 Gitee，在“设置”-&gt;“SSH 公钥”中添加。</li>
+<li>测试连接：<code class="notranslate">ssh -T git@gitee.com</code></li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户执行 <code class="notranslate">git clone git@gitee.com:user/test.git</code>，报错。</li>
+<li>检查 SSH 目录：<code class="notranslate">ls -al ~/.ssh</code>，发现无 <code class="notranslate">id_rsa.pub</code>。</li>
+<li>生成密钥：<code class="notranslate">ssh-keygen -t rsa -b 4096 -C "user@example.com"</code>，一路回车。</li>
+<li>复制公钥：<code class="notranslate">cat ~/.ssh/id_rsa.pub</code>，复制输出内容。</li>
+<li>登录 Gitee，进入“设置”-&gt;“SSH 公钥”，粘贴公钥并保存。</li>
+<li>测试连接：<code class="notranslate">ssh -T git@gitee.com</code>，输出 <code class="notranslate">Hi 用户名! You've successfully authenticated...</code></li>
+<li>再次克隆，成功。</li>
+</ol>
+<hr>
+<h3>问题9：首次推送代码，报错 src refspec master does not match any</h3>
+<p><strong>现象</strong><br>
+执行 <code class="notranslate">git push origin master</code> 报错：</p>
+<pre class="notranslate"><code class="notranslate">error: src refspec master does not match any
+error: failed to push some refs to '...'
+</code></pre>
+<p><strong>原因</strong><br>
+本地尚未进行任何提交，master 分支不存在。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>添加文件并提交：<code class="notranslate">git add .</code> → <code class="notranslate">git commit -m "first commit"</code></li>
+<li>再次推送。</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户执行：
+<pre class="notranslate"><code class="notranslate">git init
+git remote add origin https://gitee.com/user/myapp.git
+</code></pre>
+</li>
+<li>直接推送：<code class="notranslate">git push origin master</code>，报错。</li>
+<li>创建初始提交：
+<pre class="notranslate"><code class="notranslate">echo "# MyApp" &gt; README.md
+git add README.md
+git commit -m "Initial commit"
+</code></pre>
+</li>
+<li>再次推送：<code class="notranslate">git push origin master</code>，成功。</li>
+</ol>
+<hr>
+<h3>问题10：推送被拒绝，报错 failed to push some refs to，提示远程有本地没有的更新</h3>
+<p><strong>现象</strong><br>
+执行 <code class="notranslate">git push</code> 报错：</p>
+<pre class="notranslate"><code class="notranslate">! [rejected]        master -&gt; master (fetch first)
+error: failed to push some refs to '...'
+</code></pre>
+<p><strong>原因</strong><br>
+远程仓库存在本地没有的提交（如自动生成的 README），需要先合并。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>拉取远程代码并允许合并不相关历史：<br>
+<code class="notranslate">git pull origin master --allow-unrelated-histories</code></li>
+<li>解决冲突（如有），保存合并信息。</li>
+<li>再次推送。</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户在 Gitee 网页创建仓库时勾选了“初始化仓库”，生成了 README.md。</li>
+<li>本地操作：
+<pre class="notranslate"><code class="notranslate">git init
+echo "笔记内容" &gt; note.txt
+git add note.txt
+git commit -m "add note"
+git remote add origin https://gitee.com/user/my-note.git
+</code></pre>
+</li>
+<li>推送报错。</li>
+<li>执行拉取：<br>
+<code class="notranslate">git pull origin master --allow-unrelated-histories</code><br>
+输出：
+<pre class="notranslate"><code class="notranslate">Merge made by the 'recursive' strategy.
+README.md | 1 +
+1 file changed, 1 insertion(+)
+</code></pre>
+</li>
+<li>再次推送：<code class="notranslate">git push origin master</code>，成功。</li>
+</ol>
+<hr>
+<h3>问题11：HTTPS 推送时提示 Authentication failed</h3>
+<p><strong>现象</strong><br>
+使用 HTTPS 推送时弹出登录框，输入正确用户名和密码后仍提示认证失败。</p>
+<p><strong>原因</strong><br>
+Gitee 已不再支持直接使用账号密码进行 HTTPS 推送，需使用私人令牌。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>登录 Gitee，进入“设置”-&gt;“私人令牌”，生成新令牌（勾选必要权限）。</li>
+<li>复制令牌。</li>
+<li>再次推送，用户名输入 Gitee 用户名，密码输入令牌。</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户执行 <code class="notranslate">git push origin master</code>，弹出登录窗口。</li>
+<li>输入用户名 <code class="notranslate">devuser</code> 和 Gitee 登录密码，认证失败。</li>
+<li>登录 Gitee，生成私人令牌（如 <code class="notranslate">f1a2b3c4d5e6...</code>）。</li>
+<li>再次推送，用户名输入 <code class="notranslate">devuser</code>，密码输入令牌，成功。</li>
+</ol>
+<hr>
+<h3>问题12：git push 时报错因分支被保护</h3>
+<p><strong>现象</strong><br>
+执行 <code class="notranslate">git push origin master</code> 被拒绝，提示分支受保护。</p>
+<p><strong>原因</strong><br>
+项目管理者将 master 分支设置为保护分支，禁止直接推送，需通过 Pull Request。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>本地创建新分支：<code class="notranslate">git checkout -b feature/new</code></li>
+<li>在新分支上开发并提交。</li>
+<li>推送新分支：<code class="notranslate">git push origin feature/new</code></li>
+<li>在 Gitee 网页上发起 Pull Request，请求合并到 master。</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户推送 master 分支，报错：
+<pre class="notranslate"><code class="notranslate">remote: error: GE007: Your push would publish a private email address.
+remote: error: hook declined to update refs/heads/master
+</code></pre>
+</li>
+<li>创建功能分支并推送：
+<pre class="notranslate"><code class="notranslate">git checkout -b feature/fix-typo
+# 修改文件
+git add .
+git commit -m "fix typo"
+git push origin feature/fix-typo
+</code></pre>
+</li>
+<li>登录 Gitee，进入仓库，点击“Pull Requests”-&gt;“新建 Pull Request”，选择源分支 <code class="notranslate">feature/fix-typo</code>，目标分支 <code class="notranslate">master</code>，提交。</li>
+<li>等待管理员审核合并。</li>
+</ol>
+<hr>
+<h3>问题13：执行 git push 时提示“remote origin already exists”</h3>
+<p><strong>现象</strong><br>
+执行 <code class="notranslate">git remote add origin &lt;仓库地址&gt;</code> 报错：</p>
+<pre class="notranslate"><code class="notranslate">error: remote origin already exists.
+</code></pre>
+<p><strong>原因</strong><br>
+本地已存在名为 origin 的远程仓库配置。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>查看现有远程：<code class="notranslate">git remote -v</code></li>
+<li>删除原有 origin：<code class="notranslate">git remote rm origin</code></li>
+<li>重新添加：<code class="notranslate">git remote add origin &lt;新地址&gt;</code></li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户执行 <code class="notranslate">git remote add origin https://gitee.com/user/project.git</code>，报错。</li>
+<li>执行 <code class="notranslate">git remote -v</code>，显示原有地址。</li>
+<li>删除：<code class="notranslate">git remote rm origin</code></li>
+<li>重新添加：<code class="notranslate">git remote add origin https://gitee.com/user/project.git</code></li>
+<li>验证：<code class="notranslate">git remote -v</code> 显示新地址。</li>
+</ol>
+<hr>
+<h3>问题14：git add 时提示“warning: LF will be replaced by CRLF”</h3>
+<p><strong>现象</strong><br>
+在 Windows 上执行 <code class="notranslate">git add</code> 时，终端输出警告：</p>
+<pre class="notranslate"><code class="notranslate">warning: LF will be replaced by CRLF in &lt;文件名&gt;
+</code></pre>
+<p><strong>原因</strong><br>
+Windows 使用 CRLF 换行符，Linux/macOS 使用 LF，Git 默认在提交时进行转换。</p>
+<p><strong>解决步骤</strong><br>
+全局设置 <code class="notranslate">core.autocrlf</code>：</p>
+<ul>
+<li>Windows：<code class="notranslate">git config --global core.autocrlf true</code></li>
+<li>禁用自动转换（不推荐）：<code class="notranslate">git config --global core.autocrlf false</code></li>
+</ul>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户在 Windows 上执行 <code class="notranslate">git add .</code>，输出警告。</li>
+<li>执行 <code class="notranslate">git config --global core.autocrlf true</code></li>
+<li>重新 <code class="notranslate">git add</code>，警告消失。</li>
+</ol>
+<hr>
+<h3>问题15：本地分支名与远程分支名不一致（main vs master）</h3>
+<p><strong>现象</strong><br>
+执行 <code class="notranslate">git push</code> 报错：<code class="notranslate">error: src refspec master does not match any</code></p>
+<p><strong>原因</strong><br>
+本地默认分支为 main，远程为 master（或反之），名称不一致。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>查看当前分支：<code class="notranslate">git branch</code></li>
+<li>重命名分支：
+<pre class="notranslate"><code class="notranslate">git branch -m main master
+</code></pre>
+</li>
+<li>推送并设置上游：<code class="notranslate">git push -u origin master</code></li>
+<li>（可选）修改默认分支名：<code class="notranslate">git config --global init.defaultBranch master</code></li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户执行 <code class="notranslate">git push</code>，报错。</li>
+<li>执行 <code class="notranslate">git branch</code>，显示 <code class="notranslate">* main</code>。</li>
+<li>重命名：<code class="notranslate">git branch -m main master</code></li>
+<li>推送：<code class="notranslate">git push -u origin master</code>，成功。</li>
+</ol>
+<hr>
+<h2>第四部分：分支与协作问题</h2>
+<h3>问题16：git pull 后出现合并冲突</h3>
+<p><strong>现象</strong><br>
+执行 <code class="notranslate">git pull</code> 后，提示：</p>
+<pre class="notranslate"><code class="notranslate">Auto-merging &lt;文件名&gt;
+CONFLICT (content): Merge conflict in &lt;文件名&gt;
+Automatic merge failed; fix conflicts and then commit the result.
+</code></pre>
+<p><strong>原因</strong><br>
+两人修改了同一文件的同一区域，Git 无法自动合并。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>查看冲突文件：<code class="notranslate">git status</code></li>
+<li>手动编辑文件，删除 <code class="notranslate">&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>、<code class="notranslate">=======</code>、<code class="notranslate">&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> 标记，保留最终内容。</li>
+<li>标记为已解决：<code class="notranslate">git add &lt;文件名&gt;</code></li>
+<li>提交合并：<code class="notranslate">git commit -m "resolve conflict"</code></li>
+<li>推送。</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>开发者 A 先修改 <code class="notranslate">index.html</code> 并推送。</li>
+<li>开发者 B 在本地也修改了同一文件，推送时被拒绝。</li>
+<li>B 执行 <code class="notranslate">git pull</code>，出现冲突提示。</li>
+<li>打开 <code class="notranslate">index.html</code>，看到：
+<pre class="notranslate"><code class="notranslate">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+&lt;h1&gt;Welcome&lt;/h1&gt;
+=======
+&lt;h1&gt;首页&lt;/h1&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; commit-hash
+</code></pre>
+</li>
+<li>沟通后决定保留“首页”，删除标记行，保存文件。</li>
+<li>执行：
+<pre class="notranslate"><code class="notranslate">git add index.html
+git commit -m "解决标题冲突"
+</code></pre>
+</li>
+<li>推送成功。</li>
+</ol>
+<hr>
+<h3>问题17：不小心把代码提交到了错误的分支</h3>
+<p><strong>现象</strong><br>
+本应在功能分支开发，却在 master 分支上做了提交。</p>
+<p><strong>解决步骤（未推送）</strong></p>
+<ol>
+<li>撤销最后一次提交但保留修改：<code class="notranslate">git reset HEAD~1 --soft</code></li>
+<li>切换到正确分支：<code class="notranslate">git checkout feature/branch</code></li>
+<li>重新提交：<code class="notranslate">git commit -m "正确信息"</code></li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户当前在 master 分支，修改代码并提交：
+<pre class="notranslate"><code class="notranslate">git add .
+git commit -m "add payment feature"
+</code></pre>
+</li>
+<li>发现应在新分支开发，执行：<br>
+<code class="notranslate">git reset HEAD~1 --soft</code></li>
+<li>创建并切换到新分支：<code class="notranslate">git checkout -b feature/pay</code></li>
+<li>重新提交：
+<pre class="notranslate"><code class="notranslate">git add .
+git commit -m "feat: 添加支付功能"
+</code></pre>
+</li>
+<li>推送：<code class="notranslate">git push origin feature/pay</code></li>
+</ol>
+<hr>
+<h3>问题18：如何撤销已经推送到远程的提交</h3>
+<p><strong>现象</strong><br>
+需要回退到之前某个版本，但提交已推送。</p>
+<p><strong>解决步骤（两种方式）</strong></p>
+<p><strong>方法一：reset + force（适合独自使用的分支）</strong></p>
+<ol>
+<li>找到目标哈希：<code class="notranslate">git log --oneline</code></li>
+<li>本地回退：<code class="notranslate">git reset --hard &lt;哈希&gt;</code></li>
+<li>强制推送：<code class="notranslate">git push --force</code></li>
+</ol>
+<p><strong>方法二：revert（适合多人协作）</strong></p>
+<ol>
+<li>生成反向提交：<code class="notranslate">git revert &lt;坏提交哈希&gt;</code></li>
+<li>推送：<code class="notranslate">git push</code></li>
+</ol>
+<p><strong>具体案例（reset 方式）</strong><br>
+操作记录：</p>
+<ol>
+<li>用户推送了坏提交 <code class="notranslate">abc123</code>。</li>
+<li>查看历史：<code class="notranslate">git log --oneline</code>，找到稳定版本 <code class="notranslate">def456</code>。</li>
+<li>执行：
+<pre class="notranslate"><code class="notranslate">git reset --hard def456
+git push --force
+</code></pre>
+</li>
+</ol>
+<p><strong>具体案例（revert 方式）</strong><br>
+操作记录：</p>
+<ol>
+<li>用户执行 <code class="notranslate">git revert abc123</code>，生成反向提交。</li>
+<li>保存提交信息。</li>
+<li>推送：<code class="notranslate">git push origin master</code></li>
+</ol>
+<hr>
+<h3>问题19：本地有未提交的修改，如何拉取远程更新而不丢失本地改动</h3>
+<p><strong>现象</strong><br>
+执行 <code class="notranslate">git pull</code> 报错：</p>
+<pre class="notranslate"><code class="notranslate">error: Your local changes would be overwritten by merge.
+</code></pre>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>暂存本地修改：<code class="notranslate">git stash</code></li>
+<li>拉取更新：<code class="notranslate">git pull</code></li>
+<li>恢复修改：<code class="notranslate">git stash pop</code></li>
+<li>若产生冲突，解决后执行 <code class="notranslate">git stash drop</code></li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户修改了 <code class="notranslate">config.py</code> 未提交，执行 <code class="notranslate">git pull</code> 报错。</li>
+<li>执行：
+<pre class="notranslate"><code class="notranslate">git stash
+git pull
+git stash pop
+</code></pre>
+</li>
+<li>无冲突，恢复成功。</li>
+</ol>
+<hr>
+<h3>问题20：执行 git pull --rebase 后进入卡死或中断状态</h3>
+<p><strong>现象</strong><br>
+执行 <code class="notranslate">git pull --rebase</code> 后，提示文件被占用或冲突，状态显示为 <code class="notranslate">(master|REBASE 1/1)</code>。</p>
+<p><strong>原因</strong></p>
+<ul>
+<li>文件被其他程序占用（如 PPT 被 PowerPoint 打开）。</li>
+<li>rebase 过程中断。</li>
+</ul>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>关闭占用文件的程序。</li>
+<li>中止 rebase：<code class="notranslate">git rebase --abort</code></li>
+<li>改用普通合并：<code class="notranslate">git pull origin master --allow-unrelated-histories</code></li>
+<li>解决冲突后提交并推送。</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户执行 <code class="notranslate">git pull --rebase origin master</code>，输出：
+<pre class="notranslate"><code class="notranslate">Unlink of file 'Git.pptx' failed. Should I try again? (y/n)
+</code></pre>
+</li>
+<li>关闭正在打开的 PowerPoint 文件。</li>
+<li>执行 <code class="notranslate">git rebase --abort</code></li>
+<li>改用：<code class="notranslate">git pull origin master --allow-unrelated-histories</code></li>
+<li>合并成功后推送。</li>
+</ol>
+<hr>
+<h3>问题21：执行 git rebase --abort 失败，提示文件会被覆盖</h3>
+<p><strong>现象</strong><br>
+执行 <code class="notranslate">git rebase --abort</code> 报错：</p>
+<pre class="notranslate"><code class="notranslate">error: The following untracked working tree files would be overwritten by reset: &lt;文件名&gt;
+</code></pre>
+<p><strong>原因</strong><br>
+工作区中存在与 rebase 目标冲突的未跟踪文件。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>备份冲突文件。</li>
+<li>删除或移动这些文件。</li>
+<li>重新执行 <code class="notranslate">git rebase --abort</code></li>
+<li>恢复备份（如有需要）。</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户执行 <code class="notranslate">git rebase --abort</code>，报错提示 <code class="notranslate">Git.pptx</code> 会被覆盖。</li>
+<li>备份 <code class="notranslate">Git.pptx</code> 到桌面，然后删除原文件：<code class="notranslate">rm Git.pptx</code></li>
+<li>再次执行 <code class="notranslate">git rebase --abort</code>，成功。</li>
+<li>将备份文件复制回原目录。</li>
+</ol>
+<hr>
+<h2>第五部分：Gitee 特有功能问题</h2>
+<h3>问题22：设置了“保护分支”后如何提交代码</h3>
+<p><strong>现象</strong><br>
+直接推送被拒绝，提示分支受保护。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>创建功能分支。</li>
+<li>推送功能分支。</li>
+<li>在 Gitee 发起 Pull Request。</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户推送 master 被拒，提示分支受保护。</li>
+<li>创建分支并推送：
+<pre class="notranslate"><code class="notranslate">git checkout -b feature/new
+# 开发
+git push origin feature/new
+</code></pre>
+</li>
+<li>在 Gitee 发起 PR，等待审核。</li>
+</ol>
+<hr>
+<h3>问题23：Gitee Pages 开启后，网站样式丢失或 404</h3>
+<p><strong>现象</strong><br>
+Pages 网站可访问，但 CSS、图片等资源加载失败（404）。</p>
+<p><strong>原因</strong><br>
+资源路径使用了绝对路径，未考虑项目名作为子路径。</p>
+<p><strong>解决步骤</strong><br>
+将 HTML 中的资源引用改为相对路径（去掉开头的斜杠）。</p>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>仓库名为 <code class="notranslate">myblog</code>，根目录有 <code class="notranslate">index.html</code> 和 <code class="notranslate">css/style.css</code>。</li>
+<li>原引用：<code class="notranslate">&lt;link rel="stylesheet" href="/css/style.css"&gt;</code></li>
+<li>修改为：<code class="notranslate">&lt;link rel="stylesheet" href="css/style.css"&gt;</code></li>
+<li>提交推送，Pages 自动重新部署，样式恢复正常。</li>
+</ol>
+<hr>
+<h2>第六部分：Git 基础操作混淆问题</h2>
+<h3>问题24：git add 和 git commit 的区别，为什么直接 git commit 报错</h3>
+<p><strong>现象</strong><br>
+修改文件后直接执行 <code class="notranslate">git commit -m "msg"</code>，提示 <code class="notranslate">no changes added to commit</code>。</p>
+<p><strong>原因</strong><br>
+修改未通过 <code class="notranslate">git add</code> 添加到暂存区。</p>
+<p><strong>解决步骤</strong><br>
+先 <code class="notranslate">git add</code>，再 <code class="notranslate">git commit</code>，或使用 <code class="notranslate">git commit -a</code>（仅对已跟踪文件）。</p>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户修改 <code class="notranslate">README.md</code>，执行 <code class="notranslate">git commit -m "update"</code>，报错。</li>
+<li>执行 <code class="notranslate">git add README.md</code></li>
+<li>再次 <code class="notranslate">git commit -m "update"</code>，成功。</li>
+</ol>
+<hr>
+<h3>问题25：.gitignore 配置了但文件仍被提交</h3>
+<p><strong>现象</strong><br>
+<code class="notranslate">.gitignore</code> 中写入了规则，但某些文件或文件夹仍出现在 <code class="notranslate">git status</code> 中。</p>
+<p><strong>原因</strong><br>
+这些文件在添加 <code class="notranslate">.gitignore</code> 之前已被 Git 跟踪。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>停止跟踪：<code class="notranslate">git rm -r --cached &lt;文件/文件夹&gt;</code></li>
+<li>提交删除记录。</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户不小心提交了 <code class="notranslate">node_modules</code>，之后添加 <code class="notranslate">.gitignore</code> 并提交。</li>
+<li><code class="notranslate">git status</code> 仍显示 <code class="notranslate">node_modules</code> 被修改。</li>
+<li>执行：<code class="notranslate">git rm -r --cached node_modules</code></li>
+<li>提交：<code class="notranslate">git commit -m "untrack node_modules"</code></li>
+<li>后续 <code class="notranslate">node_modules</code> 不再被跟踪。</li>
+</ol>
+<hr>
+<h3>问题26：刚提交完，发现漏了一个文件或提交信息写错了</h3>
+<p><strong>现象</strong><br>
+提交后发现漏文件或信息有误。</p>
+<p><strong>解决步骤</strong></p>
+<ul>
+<li>漏文件：<code class="notranslate">git add 漏掉的文件</code> → <code class="notranslate">git commit --amend</code></li>
+<li>改信息：<code class="notranslate">git commit --amend -m "新信息"</code></li>
+</ul>
+<p><strong>具体案例（改信息）</strong><br>
+操作记录：</p>
+<ol>
+<li>用户执行 <code class="notranslate">git commit -m "add lonin feature"</code></li>
+<li>发现拼写错误，执行 <code class="notranslate">git commit --amend -m "add login feature"</code></li>
+</ol>
+<p><strong>具体案例（漏文件）</strong><br>
+操作记录：</p>
+<ol>
+<li>用户提交了 <code class="notranslate">main.py</code>，忘了 <code class="notranslate">config.ini</code>。</li>
+<li>执行：
+<pre class="notranslate"><code class="notranslate">git add config.ini
+git commit --amend --no-edit
+</code></pre>
+</li>
+</ol>
+<hr>
+<h3>问题27：如何撤销已经推送到远程的提交（另解）</h3>
+<p><strong>现象</strong><br>
+需要撤销已推送的提交，但不想破坏历史。</p>
+<p><strong>解决步骤</strong><br>
+使用 <code class="notranslate">git revert</code> 生成反向提交。</p>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户推送了提交 <code class="notranslate">abc123</code>，需要撤销。</li>
+<li>执行 <code class="notranslate">git revert abc123</code>，生成反向提交。</li>
+<li>推送：<code class="notranslate">git push origin master</code></li>
+</ol>
+<hr>
+<h2>第七部分：环境与协作细节问题</h2>
+<h3>问题28：为什么每次 push 都要输入用户名密码？怎么记住？</h3>
+<p><strong>现象</strong><br>
+每次推送都提示输入用户名和令牌。</p>
+<p><strong>解决步骤</strong><br>
+开启凭据缓存：</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">git config --global credential.helper cache
+git config --global credential.helper <span class="pl-s"><span class="pl-pds">'</span>cache --timeout=3600<span class="pl-pds">'</span></span></pre></div>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户执行 <code class="notranslate">git config --global credential.helper 'cache --timeout=7200'</code></li>
+<li>之后 2 小时内推送无需重复输入。</li>
+</ol>
+<hr>
+<h3>问题29：Windows 和 Linux 协同工作，换行符导致所有文件被标记为修改</h3>
+<p><strong>现象</strong><br>
+跨平台切换后，<code class="notranslate">git status</code> 显示大量文件被修改，但内容未变。</p>
+<p><strong>原因</strong><br>
+换行符差异（Windows CRLF vs Linux LF）。</p>
+<p><strong>解决步骤</strong></p>
+<ul>
+<li>Windows：<code class="notranslate">git config --global core.autocrlf true</code></li>
+<li>Linux：<code class="notranslate">git config --global core.autocrlf input</code></li>
+<li>重置工作区：
+<pre class="notranslate"><code class="notranslate">git rm --cached -r .
+git reset --hard
+</code></pre>
+</li>
+</ul>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户从 Windows 推送代码，在 Linux 上 <code class="notranslate">git clone</code> 后执行 <code class="notranslate">git status</code>，显示大量文件修改。</li>
+<li>在 Linux 上执行 <code class="notranslate">git config --global core.autocrlf input</code></li>
+<li>重置工作区：
+<pre class="notranslate"><code class="notranslate">git rm --cached -r .
+git reset --hard
+</code></pre>
+</li>
+<li>再次 <code class="notranslate">git status</code>，干净。</li>
+</ol>
+<hr>
+<h3>问题30：中文文件名或提交信息显示乱码</h3>
+<p><strong>现象</strong><br>
+<code class="notranslate">git status</code> 中中文文件名显示为 <code class="notranslate">\346\265\213\350\257\225.txt</code>。</p>
+<p><strong>解决步骤</strong><br>
+设置 <code class="notranslate">core.quotepath false</code>：</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">git config --global core.quotepath <span class="pl-c1">false</span></pre></div>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户添加中文文件“测试.txt”，<code class="notranslate">git status</code> 显示乱码。</li>
+<li>执行 <code class="notranslate">git config --global core.quotepath false</code></li>
+<li>再次 <code class="notranslate">git status</code>，显示正常。</li>
+</ol>
+<hr>
+<h3>问题31：如何同步 Fork 的仓库与原仓库</h3>
+<p><strong>现象</strong><br>
+Fork 的仓库落后于原仓库。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>添加上游：<code class="notranslate">git remote add upstream 原仓库地址</code></li>
+<li>拉取更新：<code class="notranslate">git fetch upstream</code></li>
+<li>合并：<code class="notranslate">git checkout master</code> → <code class="notranslate">git merge upstream/master</code></li>
+<li>推送：<code class="notranslate">git push origin master</code></li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户 Fork 了 <code class="notranslate">https://gitee.com/author/project.git</code>。</li>
+<li>本地克隆自己的仓库，添加上游：<br>
+<code class="notranslate">git remote add upstream https://gitee.com/author/project.git</code></li>
+<li>执行：
+<pre class="notranslate"><code class="notranslate">git fetch upstream
+git checkout master
+git merge upstream/master
+</code></pre>
+</li>
+<li>推送：<code class="notranslate">git push origin master</code></li>
+</ol>
+<hr>
+<h3>问题32：如何给别人的项目贡献代码（完整 PR 流程）</h3>
+<p><strong>现象</strong><br>
+不知如何向开源项目提交代码。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>Fork 原项目</li>
+<li>克隆自己的 Fork</li>
+<li>创建功能分支</li>
+<li>开发并提交</li>
+<li>推送功能分支</li>
+<li>在 Gitee 发起 Pull Request</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户 Fork 项目到自己的账号。</li>
+<li>克隆：<code class="notranslate">git clone https://gitee.com/user/project.git</code></li>
+<li>创建分支：<code class="notranslate">git checkout -b fix-typo</code></li>
+<li>修改并提交：
+<pre class="notranslate"><code class="notranslate">git add README.md
+git commit -m "fix typo"
+</code></pre>
+</li>
+<li>推送：<code class="notranslate">git push origin fix-typo</code></li>
+<li>在 Gitee 发起 PR。</li>
+</ol>
+<hr>
+<h2>第八部分：平台功能易忽略点</h2>
+<h3>问题33：创建仓库时，README、.gitignore、许可证怎么选</h3>
+<p><strong>现象</strong><br>
+新手面对选项不知如何选择。</p>
+<p><strong>解决建议</strong></p>
+<ul>
+<li><strong>README</strong>：建议勾选，用于介绍项目。</li>
+<li><strong>.gitignore</strong>：根据项目类型选择模板，避免提交无关文件。</li>
+<li><strong>许可证</strong>：开源项目必须选择（如 MIT）。</li>
+</ul>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户创建 Java 项目，在新建仓库页面：
+<ul>
+<li>勾选“使用 README 文件初始化仓库”</li>
+<li>.gitignore 选择“Java”</li>
+<li>许可证选择“MIT License”</li>
+</ul>
+</li>
+<li>创建后仓库自动生成必要文件。</li>
+</ol>
+<hr>
+<h3>问题34：Gitee 仓库容量超限，如何移除大文件</h3>
+<p><strong>现象</strong><br>
+推送时提示文件过大或仓库总容量超限。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>使用 BFG 或 <code class="notranslate">git filter-branch</code> 从历史中删除大文件。</li>
+<li>强制推送。</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户提交了 120MB 的视频文件，推送被拒。</li>
+<li>使用 BFG 工具：
+<pre class="notranslate"><code class="notranslate">java -jar bfg.jar --delete-files big.mp4 .git
+</code></pre>
+</li>
+<li>清理：
+<pre class="notranslate"><code class="notranslate">git reflog expire --expire=now --all &amp;&amp; git gc --prune=now --aggressive
+</code></pre>
+</li>
+<li>强制推送：<code class="notranslate">git push --force</code></li>
+</ol>
+<hr>
+<h3>问题35：如何绑定自定义域名到 Gitee Pages</h3>
+<p><strong>现象</strong><br>
+希望使用自己的域名访问 Pages 网站。</p>
+<p><strong>解决步骤</strong></p>
+<ol>
+<li>在仓库“服务”-&gt;“Gitee Pages”中填写自定义域名。</li>
+<li>在域名 DNS 添加 CNAME 记录指向 <code class="notranslate">用户名.gitee.io</code>。</li>
+</ol>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户 Pages 地址为 <code class="notranslate">https://user.gitee.io/blog</code>，拥有域名 <code class="notranslate">blog.example.com</code>。</li>
+<li>在仓库 Pages 设置中，自定义域名输入 <code class="notranslate">blog.example.com</code>。</li>
+<li>在 DNS 管理后台添加 CNAME 记录：
+<ul>
+<li>主机记录：blog</li>
+<li>记录类型：CNAME</li>
+<li>记录值：user.gitee.io</li>
+</ul>
+</li>
+<li>解析生效后即可通过 <code class="notranslate">http://blog.example.com/blog</code> 访问。</li>
+</ol>
+<hr>
+<h2>第九部分：远程仓库补充问题</h2>
+<h3>问题36：git push 时报错“fatal: Unable to find remote helper for 'https'”</h3>
+<p><strong>现象</strong><br>
+执行 <code class="notranslate">git push</code> 报错：</p>
+<pre class="notranslate"><code class="notranslate">fatal: Unable to find remote helper for 'https'
+</code></pre>
+<p><strong>原因</strong><br>
+Git 安装不完整，缺少 HTTPS 协议支持。</p>
+<p><strong>解决步骤</strong><br>
+重新安装 Git，安装时勾选：</p>
+<ul>
+<li>“Git from the command line and also from 3rd-party software”</li>
+<li>“Use the OpenSSL library”</li>
+</ul>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户推送时报错。</li>
+<li>卸载当前 Git，从官网重新下载安装。</li>
+<li>安装时勾选上述组件。</li>
+<li>安装完成后推送成功。</li>
+</ol>
+<hr>
+<h3>问题37：git push 时提示“fatal: the remote end hung up unexpectedly”或“Broken pipe”</h3>
+<p><strong>现象</strong><br>
+推送大文件或较多文件时出现：</p>
+<pre class="notranslate"><code class="notranslate">Write failed: Broken pipe
+fatal: The remote end hung up unexpectedly
+</code></pre>
+<p><strong>原因</strong></p>
+<ul>
+<li>推送数据量过大，超过 Git 缓冲区限制。</li>
+<li>网络连接不稳定。</li>
+</ul>
+<p><strong>解决步骤</strong><br>
+增加缓冲区大小：</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">git config --global http.postBuffer 524288000</pre></div>
+<p><strong>具体案例</strong><br>
+操作记录：</p>
+<ol>
+<li>用户推送包含大文件的项目时出现上述错误。</li>
+<li>执行 <code class="notranslate">git config --global http.postBuffer 524288000</code></li>
+<li>重新推送，成功。</li>
+</ol>
+<hr></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
@@ -341,7 +1229,7 @@ if(""!=""){
 </script></div>
 </body>
 <script>
-var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
 var utterancesLoad=0;
 
 let themeSettings={
@@ -415,7 +1303,70 @@ function iFrameLoading(){
     }
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
 
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
 
 </script>
 
