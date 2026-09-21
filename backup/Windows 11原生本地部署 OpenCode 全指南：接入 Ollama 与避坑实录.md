@@ -142,6 +142,7 @@ OpenCode 右下角会显示类似 `8.2k (4%)` 的数字。**这是一个极易�
 ### 4.3 更换模型
 要切换模型（例如切回 `deepseek-r1:8b`），直接修改 `opencode.json` 的 `models` 字段，或者将 `models` 里的模型名改成 `deepseek-r1:8b`。重启 OpenCode 即可。
 当然，实际操作的时候发现再OpenCode界面使用/model命令可以找到Ollama下的所有模型，可以不用修改opencode.json文件来切换模型。
+
 ---
 
 ## 五、 附录：如果还想跑 Hermes Agent
