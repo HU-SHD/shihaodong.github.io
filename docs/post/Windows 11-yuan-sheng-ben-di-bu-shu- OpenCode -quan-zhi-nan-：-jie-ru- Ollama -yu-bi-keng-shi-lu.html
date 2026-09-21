@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/218474709?v=4&size=64"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="# Windows 无虚拟机本地部署 OpenCode 全指南：接入 Ollama 与避坑实录
+
+## 前言
+在 Windows 上部署 AI 编程助手，传统方案通常推荐 WSL2。">
+<meta property="og:title" content="Windows 11原生本地部署 OpenCode 全指南：接入 Ollama 与避坑实录">
+<meta property="og:description" content="# Windows 无虚拟机本地部署 OpenCode 全指南：接入 Ollama 与避坑实录
+
+## 前言
+在 Windows 上部署 AI 编程助手，传统方案通常推荐 WSL2。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://HU-SHD.github.io/shihaodong.github.io/post/Windows%2011-yuan-sheng-ben-di-bu-shu-%20OpenCode%20-quan-zhi-nan-%EF%BC%9A-jie-ru-%20Ollama%20-yu-bi-keng-shi-lu.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/218474709?v=4&size=64">
+<title>Windows 11原生本地部署 OpenCode 全指南：接入 Ollama 与避坑实录</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">Windows 11原生本地部署 OpenCode 全指南：接入 Ollama 与避坑实录</h1>
+<div class="title-right">
+    <a href="https://HU-SHD.github.io/shihaodong.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/HU-SHD/shihaodong.github.io/issues/6" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h1>Windows 无虚拟机本地部署 OpenCode 全指南：接入 Ollama 与避坑实录</h1>
+<h2>前言</h2>
+<p>在 Windows 上部署 AI 编程助手，传统方案通常推荐 WSL2。然而作者并不会用Ubunton终端，如果你会用或者打开了虚拟化，可以用如下命令：<br>
+、、、powershell</p>
+<h1>安装Ubunton终端（WSL）</h1>
+<p>wsl --install -d Ubuntu</p>
+<h1>更新包列表</h1>
+<p>sudo apt update &amp;&amp; sudo apt upgrade -y</p>
+<h1>安装 OpenCode（官方一键脚本）</h1>
+<p>curl -fsSL <a href="https://opencode.ai/install" rel="nofollow">https://opencode.ai/install</a> | bash<br>
+、、、<br>
+（当然，使用npm安装也可以）<br>
+但并不是所有电脑都开启了虚拟化，且 WSL 也会额外消耗系统资源。本文不使用WSL或者Docker，基于windows11原生环境安装opencode，记录了如何将 OpenCode 与本地 Ollama 模型（我部署了两个模型来使用，这里以Qwen2.5-Coder-7B 为例）结合，打造一款完全属于你自己的本地 AI 编码助手。</p>
+<p><strong><g-emoji class="g-emoji" alias="warning">⚠️</g-emoji> 硬件配置参考</strong>：我的电脑时 Intel i7-14650HX + NVIDIA RTX 4060 (8GB 显存) + 16GB 内存的笔记本环境，电脑配置高低只和模型大小相关，按照本文的Ollama的安装和OpenCode的安装过程不会因为电脑的配置而安装失败。但建议低配置的电脑不要部署过大的模型，8GB 显存是运行 7B 级别量化模型（如 Q4_K_M 格式）的安全底线。</p>
+<hr>
+<h2>一、 环境准备与 OpenCode 原生安装</h2>
+<h3>1.1 安装 Node.js 与 Git</h3>
+<p>OpenCode 依赖 Node.js 运行，依赖 Git 进行版本控制。请前往官网下载 Windows 的 <code class="notranslate">.msi</code> 安装包。建议安装 Node.js LTS 版本（v20以上）。</p>
+<h3>1.2 自定义路径安装 OpenCode</h3>
+<p>为了避免污染 C 盘，我们尝试将 OpenCode 临时安装到 <code class="notranslate">F:\OpenCode</code>。这里需要特别注意 npm 的路径参数。</p>
+<p><strong>正确命令</strong>（在 Git Bash 或 PowerShell 中执行）：</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">npm install -g opencode-ai@latest --prefix <span class="pl-s"><span class="pl-pds">"</span>F:/OpenCode<span class="pl-pds">"</span></span> --registry=https://registry.npmjs.org</pre></div>
+<p><strong>🚨 避坑点 1：postinstall 安全警告</strong><br>
+安装完成后，npm 可能会报出 <code class="notranslate">npm warn install-scripts</code> 警告。这是因为新版 npm 默认拦截了第三方包的 <code class="notranslate">postinstall</code> 脚本。如果不放行，OpenCode 将无法运行。<br>
+<strong>解决方案</strong>：再次执行以下命令，允许特定包运行脚本：</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">npm install -g opencode-ai --allow-scripts=opencode-ai --prefix <span class="pl-s"><span class="pl-pds">"</span>F:/OpenCode<span class="pl-pds">"</span></span> --registry=https://registry.npmjs.org</pre></div>
+<hr>
+<h2>二、 配置 Ollama 与下载本地模型</h2>
+<h3>2.1 配置 Ollama 环境变量</h3>
+<p>为了不让模型撑爆 C 盘，请将 Ollama 的模型存储路径转移到 F 盘。<br>
+在系统环境变量中添加：</p>
+<ul>
+<li><code class="notranslate">OLLAMA_MODELS</code> = <code class="notranslate">F:\Ollama\models</code></li>
+<li>随后重启 Ollama 服务。</li>
+</ul>
+<h3>2.2 绕过网络限制拉取模型</h3>
+<p>这是整个部署过程中最容易卡住的地方。</p>
+<p><strong>🚨 避坑点 3：TLS 证书校验失败</strong><br>
+直接执行 <code class="notranslate">ollama pull qwen2.5-coder:7b</code> 时，由于国内网络环境的干扰，往往会报错：<code class="notranslate">tls: failed to verify certificate: x509: certificate is not valid for any names...</code>，导致下载到 26% 左右中断。</p>
+<p><strong>解决方案 A（临时跳过证书校验）</strong>：<br>
+在 CMD 中执行：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate"><span class="pl-k">set</span> <span class="pl-smi">OLLAMA_INSECURE_REGISTRY</span><span class="pl-k">=</span><span class="pl-c1">1</span>
+ollama pull qwen2.5-coder:7b</pre></div>
+<p><strong>解决方案 B（强烈推荐：使用国内 ModelScope 镜像）</strong>：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">ollama pull modelscope.cn/Qwen/Qwen2.5-Coder-7B-Instruct-GGUF</pre></div>
+<p>该命令速度极快（实测可达 6.4 MB/s），我是用的时解决方案A和B同时使用，不确定解决方案B单独使用是否可行，建议加上临时跳过证书校验的代码，关闭cmd界面后不会影响其余界面和后续命令的证书校验。</p>
+<p><strong>🚨 避坑点 4：下载残留文件（垃圾文件）</strong><br>
+如果在下载失败后决定换源，之前中断下载产生的所有 <code class="notranslate">sha256-xxxx</code> 无后缀文件，都会残留在 <code class="notranslate">F:\Ollama\models\blobs</code> 目录下。<br>
+<strong>解决方案</strong>：退出 Ollama，直接清空 <code class="notranslate">blobs</code> 目录，干净地重新开始。但需要注意的是如果之前已经安装好了模型，例如我在此之前本地部署了DeepSeek-R1-0528-Qwen3-8B-GGUF模型，这时候如果清空blobs目录就会连带原有的所有模型都失效。这里给出两个解决方案：<br>
+1.按照文件下载日期，删除今日下载的文件即可。<br>
+2.如果很可惜你在同一天安装了模型，按照前缀来辨别。例如：我的电脑中“sha256-60e05f...”的前缀是Qwen2.5-Coder-7B-Instruct-GGUF模型的相关下载文件，而“sha256-509287”是部署的DeepSeek-R1-0528-Qwen3-8B-GGUF模型。按照前缀删除即可。</p>
+<h3>2.3 给模型改个短名字</h3>
+<p>从 ModelScope 拉取下来的模型名字很长，执行以下命令复制一个短名字：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">ollama cp modelscope.cn/Qwen/Qwen2.5-Coder-7B-Instruct-GGUF qwen2.5-coder:7b</pre></div>
+<p><em>(注：<code class="notranslate">ollama cp</code> 相当于创建硬链接，不额外占用双倍硬盘空间，底层数据是共享的。)</em></p>
+<hr>
+<h2>三、 OpenCode 接入本地模型</h2>
+<h3>3.1 找到神秘的配置文件</h3>
+<p>教程常说的 <code class="notranslate">~/.config/opencode/opencode.json</code> 在 Git Bash 中看似是个 Linux 路径，但在 Windows 中真实物理路径是：<br>
+<code class="notranslate">C:\Users\你的用户名\.config\opencode\opencode.json</code><br>
+<em>(注：它是一个隐藏文件夹，需要在资源管理器中开启“显示隐藏项目”才能看到。)</em></p>
+<h3>3.2 写入配置</h3>
+<p>打开该文件，写入：</p>
+<div class="highlight highlight-source-json"><pre class="notranslate">{
+  <span class="pl-ent">"$schema"</span>: <span class="pl-s"><span class="pl-pds">"</span>https://opencode.ai/config.json<span class="pl-pds">"</span></span>,
+  <span class="pl-ent">"provider"</span>: {
+    <span class="pl-ent">"ollama"</span>: {
+      <span class="pl-ent">"npm"</span>: <span class="pl-s"><span class="pl-pds">"</span>@ai-sdk/openai-compatible<span class="pl-pds">"</span></span>,
+      <span class="pl-ent">"name"</span>: <span class="pl-s"><span class="pl-pds">"</span>Ollama (Local)<span class="pl-pds">"</span></span>,
+      <span class="pl-ent">"options"</span>: {
+        <span class="pl-ent">"baseURL"</span>: <span class="pl-s"><span class="pl-pds">"</span>http://127.0.0.1:11434/v1<span class="pl-pds">"</span></span>
+      },
+      <span class="pl-ent">"models"</span>: {
+        <span class="pl-ent">"qwen2.5-coder:7b"</span>: {
+          <span class="pl-ent">"name"</span>: <span class="pl-s"><span class="pl-pds">"</span>Qwen2.5 Coder 7B<span class="pl-pds">"</span></span>
+        }
+      }
+    }
+  }
+}</pre></div>
+<p><em>(注：使用 <code class="notranslate">127.0.0.1</code> 比 <code class="notranslate">localhost</code> 更稳定，能绕过 IPv6 解析问题。)</em></p>
+<hr>
+<h2>四、 OpenCode 使用必读与操作技巧</h2>
+<h3>4.1 TUI 界面操作</h3>
+<p><strong>🚨 避坑点 5：不要双击 exe 打开</strong><br>
+直接双击 <code class="notranslate">opencode.exe</code> 打开 Windows 默认控制台，会导致 TUI 界面内<strong>方向键、Tab 键完全失灵</strong>，无法选中 <code class="notranslate">ollama</code> 选项。<br>
+<strong>解决方案</strong>：<strong>在 Git Bash 中启动</strong>。在终端中 <code class="notranslate">cd</code> 到你的项目目录，然后执行 <code class="notranslate">/f/OpenCode/opencode.cmd</code>，方向键即可恢复灵敏。</p>
+<p><strong>🚨 避坑点 6：复制粘贴快捷键</strong><br>
+在 OpenCode 中，<code class="notranslate">Ctrl+V</code> 无法粘贴。请使用：</p>
+<ul>
+<li>复制：鼠标拖拽选中松开即复制（然而实际上还是拖拽选中松开再右键一下才会显示copied，建议复制的时候多右键一下会更方便）；或 <code class="notranslate">Ctrl+X</code> 后按 <code class="notranslate">Y</code>复制最后一次（latest）AI回复的内容。</li>
+<li>粘贴：<code class="notranslate">Ctrl+Shift+V</code> 或 <code class="notranslate">Shift+Insert</code>。</li>
+</ul>
+<h3>4.2 理解上下文窗口限制</h3>
+<p>OpenCode 右下角会显示类似 <code class="notranslate">8.2k (4%)</code> 的数字。<strong>这是一个极易产生误导的提示</strong>。</p>
+<ul>
+<li><code class="notranslate">8.2k</code> 是当前已消耗的 Token 数。</li>
+<li><code class="notranslate">4%</code> 是 OpenCode 默认按云端大模型（如 200k 上下文）计算的占比。</li>
+<li><strong>警告</strong>：你的 RTX 4060 (8GB) 跑本地 7B 模型时，Ollama 的实际最大上下文（Context Length）通常只能承受 <strong>8k</strong>。一旦 <code class="notranslate">8.2k</code> 的绝对值超过 8k，你的本地模型会报错，或者默默丢弃最前面的对话，导致 AI “失忆”。</li>
+<li><strong>建议</strong>：不要在同一个会话里聊几十轮。发现 <code class="notranslate">8.2k</code> 接近上限时，新建会话。</li>
+</ul>
+<h3>4.3 更换模型</h3>
+<h2>要切换模型（例如切回 <code class="notranslate">deepseek-r1:8b</code>），直接修改 <code class="notranslate">opencode.json</code> 的 <code class="notranslate">models</code> 字段，或者将 <code class="notranslate">models</code> 里的模型名改成 <code class="notranslate">deepseek-r1:8b</code>。重启 OpenCode 即可。<br>
+当然，实际操作的时候发现再OpenCode界面使用/model命令可以找到Ollama下的所有模型，可以不用修改opencode.json文件来切换模型。</h2>
+<h2>五、 附录：如果还想跑 Hermes Agent</h2>
+<p>如果在原生 Windows 下还想尝试安装 Hermes Agent会比较麻烦，主要是国内环境访问国外网址时加载超时的问题。我自己在部署的时候遇到的问题主要是第二点网络卡点，哪怕挂梯子也可能出现HTTPS 克隆被中途切断，SSH 连接 GitHub 超时等问题。不过都是比较好解决或者避开的问题，就不单开一篇博客来写了，主要注意下面两个问题就行：</p>
+<ol>
+<li><strong>必须使用便携版 Python 环境</strong>：Hermes 脚本会强行在安装目录中创建虚拟环境。</li>
+<li><strong>网络卡点</strong>：脚本会尝试从 GitHub 克隆源码并下载 <code class="notranslate">uv</code>。
+<ul>
+<li>如果卡在 <code class="notranslate">Installing managed uv</code>：在 Git Bash 中用 <code class="notranslate">pip install uv</code> 装好，然后手动将 <code class="notranslate">uv.exe</code> 复制到 <code class="notranslate">F:\HermesAgent\bin</code> 目录下，骗过安装脚本。</li>
+<li>如果卡在 Git Clone：直接在浏览器下载 ZIP 源码包，解压重命名为 <code class="notranslate">hermes-agent</code>，放到 <code class="notranslate">F:\HermesAgent\</code> 目录下，再重新运行安装脚本，即可跳过下载直接配环境。</li>
+</ul>
+</li>
+</ol>
+<hr></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://HU-SHD.github.io/shihaodong.github.io">石浩东的个人博客</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","HU-SHD/shihaodong.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>
