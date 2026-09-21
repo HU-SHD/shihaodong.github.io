@@ -91,17 +91,15 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     <div id="content">
 <div class="markdown-body" id="postBody"><h1>Windows 无虚拟机本地部署 OpenCode 全指南：接入 Ollama 与避坑实录</h1>
 <h2>前言</h2>
-<p>在 Windows 上部署 AI 编程助手，传统方案通常推荐 WSL2。然而作者并不会用Ubunton终端，如果你会用或者打开了虚拟化，可以用如下命令：<br>
-、、、powershell</p>
-<h1>安装Ubunton终端（WSL）</h1>
-<p>wsl --install -d Ubuntu</p>
-<h1>更新包列表</h1>
-<p>sudo apt update &amp;&amp; sudo apt upgrade -y</p>
-<h1>安装 OpenCode（官方一键脚本）</h1>
-<p>curl -fsSL <a href="https://opencode.ai/install" rel="nofollow">https://opencode.ai/install</a> | bash<br>
-、、、<br>
-（当然，使用npm安装也可以）<br>
-但并不是所有电脑都开启了虚拟化，且 WSL 也会额外消耗系统资源。本文不使用WSL或者Docker，基于windows11原生环境安装opencode，记录了如何将 OpenCode 与本地 Ollama 模型（我部署了两个模型来使用，这里以Qwen2.5-Coder-7B 为例）结合，打造一款完全属于你自己的本地 AI 编码助手。</p>
+<p>在 Windows 上部署 AI 编程助手，传统方案通常推荐 WSL2。然而作者并不会用Ubunton终端，如果你会用或者打开了虚拟化，可以用如下命令：</p>
+<h3>安装Ubunton终端（WSL）</h3>
+<div class="highlight highlight-source-powershell"><pre class="notranslate">wsl <span class="pl-k">--</span>install <span class="pl-k">-</span>d Ubuntu</pre></div>
+<h3>更新包列表</h3>
+<div class="highlight highlight-source-powershell"><pre class="notranslate">sudo apt update &amp;&amp; sudo apt upgrade <span class="pl-k">-</span>y</pre></div>
+<h3>安装 OpenCode（官方一键脚本）</h3>
+<div class="highlight highlight-source-powershell"><pre class="notranslate">curl <span class="pl-k">-</span>fsSL https:<span class="pl-k">//</span>opencode.ai<span class="pl-k">/</span>install <span class="pl-k">|</span> bash</pre></div>
+<p>（当然，使用npm安装也可以）</p>
+<p>不过并不是所有电脑都开启了虚拟化，并且 WSL 也会额外消耗系统资源。本文不使用WSL或者Docker，基于windows11原生环境安装opencode，记录了如何将 OpenCode 与本地 Ollama 模型（我部署了两个模型来使用，这里以Qwen2.5-Coder-7B 为例）结合，打造一款完全属于你自己的本地 AI 编码助手。</p>
 <p><strong><g-emoji class="g-emoji" alias="warning">⚠️</g-emoji> 硬件配置参考</strong>：我的电脑时 Intel i7-14650HX + NVIDIA RTX 4060 (8GB 显存) + 16GB 内存的笔记本环境，电脑配置高低只和模型大小相关，按照本文的Ollama的安装和OpenCode的安装过程不会因为电脑的配置而安装失败。但建议低配置的电脑不要部署过大的模型，8GB 显存是运行 7B 级别量化模型（如 Q4_K_M 格式）的安全底线。</p>
 <hr>
 <h2>一、 环境准备与 OpenCode 原生安装</h2>

@@ -2,18 +2,23 @@
 
 ## 前言
 在 Windows 上部署 AI 编程助手，传统方案通常推荐 WSL2。然而作者并不会用Ubunton终端，如果你会用或者打开了虚拟化，可以用如下命令：
-、、、powershell
-# 安装Ubunton终端（WSL）
+### 安装Ubunton终端（WSL）
+```powershell
 wsl --install -d Ubuntu
+```
 
-# 更新包列表
+### 更新包列表
+```powershell
 sudo apt update && sudo apt upgrade -y
+```
 
-# 安装 OpenCode（官方一键脚本）
+### 安装 OpenCode（官方一键脚本）
+```powershell
 curl -fsSL https://opencode.ai/install | bash
-、、、
+```
 （当然，使用npm安装也可以）
-但并不是所有电脑都开启了虚拟化，且 WSL 也会额外消耗系统资源。本文不使用WSL或者Docker，基于windows11原生环境安装opencode，记录了如何将 OpenCode 与本地 Ollama 模型（我部署了两个模型来使用，这里以Qwen2.5-Coder-7B 为例）结合，打造一款完全属于你自己的本地 AI 编码助手。
+
+不过并不是所有电脑都开启了虚拟化，并且 WSL 也会额外消耗系统资源。本文不使用WSL或者Docker，基于windows11原生环境安装opencode，记录了如何将 OpenCode 与本地 Ollama 模型（我部署了两个模型来使用，这里以Qwen2.5-Coder-7B 为例）结合，打造一款完全属于你自己的本地 AI 编码助手。
 
 **⚠️ 硬件配置参考**：我的电脑时 Intel i7-14650HX + NVIDIA RTX 4060 (8GB 显存) + 16GB 内存的笔记本环境，电脑配置高低只和模型大小相关，按照本文的Ollama的安装和OpenCode的安装过程不会因为电脑的配置而安装失败。但建议低配置的电脑不要部署过大的模型，8GB 显存是运行 7B 级别量化模型（如 Q4_K_M 格式）的安全底线。
 
