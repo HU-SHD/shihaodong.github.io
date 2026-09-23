@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/218474709?v=4&size=64"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="#本地Python环境管理与配置：Anaconda环境移植Miniconda流程与注意事项（以本地环境Py39为实战全记录）
+
+## 前言
+
+我们在本地部署大模型、进行深度学习训练或计算机视觉开发时，Python 环境管理是绕不过去的第一道坎，并且第一道坎也是最大的坎，环境冲突、环境移植、环境管理、版本隔离……python环境贯穿整个项目。">
+<meta property="og:title" content="本地Python环境管理与配置：Anaconda环境移植Miniconda流程与注意事项">
+<meta property="og:description" content="#本地Python环境管理与配置：Anaconda环境移植Miniconda流程与注意事项（以本地环境Py39为实战全记录）
+
+## 前言
+
+我们在本地部署大模型、进行深度学习训练或计算机视觉开发时，Python 环境管理是绕不过去的第一道坎，并且第一道坎也是最大的坎，环境冲突、环境移植、环境管理、版本隔离……python环境贯穿整个项目。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://HU-SHD.github.io/shihaodong.github.io/post/ben-di-Python-huan-jing-guan-li-yu-pei-zhi-%EF%BC%9AAnaconda-huan-jing-yi-zhi-Miniconda-liu-cheng-yu-zhu-yi-shi-xiang.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/218474709?v=4&size=64">
+<title>本地Python环境管理与配置：Anaconda环境移植Miniconda流程与注意事项</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">本地Python环境管理与配置：Anaconda环境移植Miniconda流程与注意事项</h1>
+<div class="title-right">
+    <a href="https://HU-SHD.github.io/shihaodong.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/HU-SHD/shihaodong.github.io/issues/7" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p>#本地Python环境管理与配置：Anaconda环境移植Miniconda流程与注意事项（以本地环境Py39为实战全记录）</p>
+<h2>前言</h2>
+<p>我们在本地部署大模型、进行深度学习训练或计算机视觉开发时，Python 环境管理是绕不过去的第一道坎，并且第一道坎也是最大的坎，环境冲突、环境移植、环境管理、版本隔离……python环境贯穿整个项目。我在刚开始接触机器学习深度学习时，选择的是安装 Anaconda：它自带 Python、Conda、Jupyter、Spyder、大量科学计算库，能做到“开箱即用”。但后续真正进入多项目、多 CUDA 版本、多框架共存阶段后，Anaconda 的缺点会迅速暴露：体积臃肿、base 环境污染严重、官方源访问不稳定、SSL 报错频繁、系统级配置与用户级配置互相干扰、<code class="notranslate">PYTHONPATH</code> 污染导致 Conda 自身异常……这些问题在我这里全部都发生过，并且干扰过很久项目的进展。</p>
+<p>本文将完整回顾我从 <strong>彻底卸载 Anaconda</strong> 到 <strong>Miniconda 环境完美移植</strong> 的全过程。以 <code class="notranslate">py39</code> 环境（PyTorch 2.5.1 + CUDA 12.1 + ONNX 等）为实战案例。</p>
+<p>本文不仅给出命令，还会重点说明：</p>
+<ul>
+<li>为什么推荐 Miniconda 而不是 Anaconda；</li>
+<li>为什么必须清理 <code class="notranslate">defaults</code> 频道；</li>
+<li>为什么不建议直接 <code class="notranslate">conda env create -f</code> 全量 YAML；</li>
+<li>为什么 PyTorch 要用官方源而不是国内镜像；</li>
+<li>为什么 <code class="notranslate">sympy</code>、<code class="notranslate">protobuf</code>、<code class="notranslate">opencv-python</code>、<code class="notranslate">numpy</code> 这些包必须锁版本；</li>
+<li>为什么 <code class="notranslate">--no-deps</code> 有时候不是“危险操作”，而是保护核心框架的必要手段；</li>
+<li>其他常见做法为什么看似省事，实际会带来更大的隐患。</li>
+</ul>
+<hr>
+<h2>一、为何放弃 Anaconda？（小错误不断）</h2>
+<p>在决定卸载 Anaconda 之前，我遇到了以下几个致命问题。它们并不是孤立的，而是 Anaconda 默认配置、Conda 依赖解析机制、Windows 多 Python 环境、国内网络环境共同作用的结果。</p>
+<h3>1.1 <code class="notranslate">repodata.json</code> 解析失败</h3>
+<p>执行：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">conda create -n dsh_project python=3.10 -y</pre></div>
+<p>Conda 报错：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">RuntimeError: Unable to read repodata JSON file 'https://repo.anaconda.com/pkgs/main/win-64'
+</code></pre>
+<p>这个错误的本质是：Conda 在创建环境前，需要先从配置的 channel 下载 <code class="notranslate">repodata.json</code>，也就是包索引元数据。如果这个文件下载失败、被代理截断、SSL 证书验证失败，或者镜像源返回了不完整内容，Conda 就无法解析依赖树。</p>
+<p><strong>为什么会出现？</strong></p>
+<p>默认走 <code class="notranslate">repo.anaconda.com</code>，国内访问不稳定，同时请求可能被代理、杀毒软件、公司网络拦截；镜像源配置不完整，导致部分 channel 仍走官方源，<code class="notranslate">defaults</code> 与镜像源混用，元数据不一致</p>
+<p><strong>其他做法的坏处：</strong></p>
+<p>我尝试过只换一部分源，但是Conda 仍可能访问官方源，问题依旧，第三方库依旧无法成功下载，更不用说忽略SSL错误导致后续依赖解析更乱。不建议自己多次重复尝试，我自己在不断尝试的时候在 base 环境里乱装包，使得 Conda 自身依赖也变复杂，修复难度翻倍以至于最后无法修复，选择导出yaml文件完全卸载。</p>
+<h3>1.2 <code class="notranslate">defaults</code> 频道阴魂不散</h3>
+<p>明明在用户级 <code class="notranslate">.condarc</code> 中删除了 <code class="notranslate">defaults</code>，但执行：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">conda config --show channels</pre></div>
+<p>依然显示 <code class="notranslate">defaults</code>。原因是 Conda 配置有多个层级：</p>
+<ol>
+<li>系统级配置，例如 <code class="notranslate">D:\Anaconda3\.condarc</code>；</li>
+<li>用户级配置，例如 <code class="notranslate">C:\Users\你的用户名\.condarc</code>；</li>
+<li>环境级配置；</li>
+<li><code class="notranslate">condarc.d</code> 目录下的额外配置，例如 <code class="notranslate">anaconda-auth.yml</code>；</li>
+<li>环境变量与命令行参数。</li>
+</ol>
+<p>只要系统级配置或 <code class="notranslate">condarc.d</code> 还在，<code class="notranslate">defaults</code> 就可能继续生效。结果就是：网络请求频繁跑偏到官方源，引发 SSL 证书验证失败：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">SSLError: Hostname mismatch
+</code></pre>
+<p><strong>其他做法的坏处：</strong></p>
+<p>我试过只改用户级 <code class="notranslate">.condarc</code>，但事实上继续运行show channels命令，依旧会展示defaults通道。因为系统级配置优先级更高，问题没有根治。而直接删除整个conda的安装目录也不行，PATH、注册表等内容残留，很影响后续的重装（=^=）。以及后续如果修改了.condarc文件，需要重启anaconda prompt或者cmd，否则修改内容不会生效。</p>
+<h3>1.3 <code class="notranslate">PYTHONPATH</code> 污染</h3>
+<p>设置了：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">PYTHONPATH=E:\PythonLibs\modelscope</pre></div>
+<p>之后，Conda 在启动时加载了该路径下的 <code class="notranslate">urllib3</code>，与 Conda 自带版本冲突，引发各种莫名其妙的 SSL 和请求异常。</p>
+<p>Python 导入包时，<code class="notranslate">sys.path</code> 的顺序非常关键。<code class="notranslate">PYTHONPATH</code> 会插入到标准库和 site-packages 之前或之间，导致 Conda 自己运行时加载到外部版本的 <code class="notranslate">urllib3</code>、<code class="notranslate">requests</code>、<code class="notranslate">certifi</code> 等包。Conda 本身也是 Python 程序，它同样依赖这些库。一旦版本不匹配，就可能出现：</p>
+<ul>
+<li>SSL 证书验证失败；</li>
+<li><code class="notranslate">requests</code> 异常；</li>
+<li><code class="notranslate">urllib3</code> 版本冲突；</li>
+<li>Conda 命令时好时坏；</li>
+<li>某些环境正常，某些环境报错。</li>
+</ul>
+<p><strong>其他做法的坏处：</strong></p>
+<p>不要重复设置环境变量！！！全局设置的 <code class="notranslate">PYTHONPATH</code>被无理由地修改或者添加会导致所有 Python、所有 Conda 环境都被污染！不要轻易动环境变量！！！尤其不要把模型库、项目库和下载库全都放进全局路径里！后续路径冲突了完全发现不了！！！</p>
+<p>正确做法应该是：不要让全局 <code class="notranslate">PYTHONPATH</code> 污染 Conda 环境。如果某个环境确实需要额外路径，使用环境级变量：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">conda env config vars <span class="pl-k">set</span> <span class="pl-smi">PYTHONPATH</span><span class="pl-k">=</span> -n 环境名</pre></div>
+<p>或者干脆在项目代码里通过 <code class="notranslate">sys.path.append</code> 处理，而不是全局污染。</p>
+<h3>1.4 Anaconda base 环境过于臃肿</h3>
+<p>Anaconda 的 <code class="notranslate">base</code> 环境预装了大量包：Jupyter、NumPy、SciPy、Matplotlib、Pandas、Scikit-learn、Spyder、Qt、各种图像库等。看起来方便，实际带来几个问题：</p>
+<ul>
+<li>依赖关系复杂，安装新包时解析时间极长；</li>
+<li>版本冲突概率高；</li>
+<li>升级某个包可能连带升级 Conda 自身依赖，导致 Conda 崩溃；</li>
+<li>很多包你根本不用，却参与依赖求解；</li>
+<li>一旦 base 坏了，修复成本极高。</li>
+</ul>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>在 base 里直接 <code class="notranslate">pip install</code> 所有项目依赖：不同项目互相冲突。</li>
+<li>用 base 跑 PyTorch/TensorFlow：CUDA、NumPy、Protobuf 版本容易互相打架。</li>
+<li>把 base 当万能环境：最终变成“什么都有，什么都跑不稳”。</li>
+</ul>
+<p><strong>最终结论：</strong></p>
+<p>Anaconda 的 <code class="notranslate">base</code> 环境过于臃肿，且系统级配置与用户级配置互相干扰。为了获得一个干净、可控、轻量的环境，我决定彻底卸载 Anaconda，转投 <strong>Miniconda</strong>。</p>
+<p>Miniconda 只包含 Conda、Python 和少量基础依赖。它把“环境管理”交给你，而不是替你做一堆不可控的决定。对于 AI 开发来说，这种可控性远比“预装一大堆包”重要。</p>
+<hr>
+<h2>二、Miniconda 安装与“终极”配置</h2>
+<h3>2.1 解决没有 Miniconda Prompt 的问题</h3>
+<p>由于 Miniconda 安装时默认不勾选添加至 PATH，且系统同时存在多个 Python 环境，导致开始菜单没有 Miniconda Prompt。</p>
+<p>有些教程会让你把 Conda 加入全局 PATH，但这在 Windows 上非常危险：</p>
+<ul>
+<li><code class="notranslate">python</code> 命令可能被 Conda 的 Python 覆盖；</li>
+<li>系统其他工具可能调用错误 Python；</li>
+<li>多版本 Conda、Anaconda、Miniconda 互相抢占；</li>
+<li>卸载时 PATH 残留，后续命令混乱。</li>
+</ul>
+<p>更推荐的做法是：不把 Conda 加入全局 PATH，而是创建一个专用快捷方式。</p>
+<p>创建一个新的快捷方式，目标填写（根据实际安装路径调整，注意我的是 <code class="notranslate">D:\Miniconda3\miniconda</code>）：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">cmd.exe /K <span class="pl-s"><span class="pl-pds">"</span>D:\Miniconda3\miniconda\Scripts\activate.bat<span class="pl-pds">"</span></span></pre></div>
+<p>这样每次打开这个快捷方式，就进入 Miniconda 的 <code class="notranslate">base</code> 环境，再通过 <code class="notranslate">conda activate</code> 切换环境。它不会污染系统全局 Python。</p>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>把 Conda 加入全局 PATH：容易和系统 Python、Windows Store Python、其他 Conda 冲突。</li>
+<li>每次手动输入完整路径激活：效率低，容易忘。</li>
+<li>直接双击 <code class="notranslate">python.exe</code>：绕过 Conda 环境，装包位置错乱。</li>
+</ul>
+<h3>2.2 彻底根除 <code class="notranslate">defaults</code> 频道（核心难点）</h3>
+<p>即使修改了用户级 <code class="notranslate">.condarc</code>，<code class="notranslate">defaults</code> 依然存在，因为系统级配置（<code class="notranslate">D:\Miniconda3\miniconda\.condarc</code>）和 <code class="notranslate">condarc.d</code> 目录下的 <code class="notranslate">anaconda-auth.yml</code> 在作祟。</p>
+<p>Conda 的配置合并规则是：多个配置文件会按优先级合并。你以为删了 <code class="notranslate">defaults</code>，但系统级配置里还有；你以为只改了一个文件，但 <code class="notranslate">condarc.d</code> 又加回来了。</p>
+<p><strong>终极解决步骤（实在没招了就这么干吧，亲测有效）：</strong></p>
+<ol>
+<li>使用以下命令查看所有生效的配置文件：</li>
+</ol>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">conda config --show-sources</pre></div>
+<ol start="2">
+<li><strong>删除或重命名系统级 <code class="notranslate">.condarc</code></strong>：</li>
+</ol>
+<p>例如：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">D:\Miniconda3\miniconda\.condarc -<span class="pl-k">&gt;</span> .condarc.bak</pre></div>
+<p>同时删除 <code class="notranslate">condarc.d</code> 目录。</p>
+<ol start="3">
+<li>将用户级 <code class="notranslate">C:\Users\你的用户名\.condarc</code> 完全覆盖为以下内容（彻底禁用官方源，转战清华源）：</li>
+</ol>
+<div class="highlight highlight-source-yaml"><pre class="notranslate"><span class="pl-ent">channels</span>:
+  - <span class="pl-s">conda-forge</span>
+  - <span class="pl-s">pytorch</span>
+  - <span class="pl-s">nodefaults</span>
+<span class="pl-ent">default_channels</span>:
+  - <span class="pl-s">https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main</span>
+  - <span class="pl-s">https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r</span>
+<span class="pl-ent">custom_channels</span>:
+  <span class="pl-ent">conda-forge</span>: <span class="pl-s">https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud</span>
+  <span class="pl-ent">pytorch</span>: <span class="pl-s">https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud</span>
+  <span class="pl-ent">msys2</span>: <span class="pl-s">https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/msys2</span>
+<span class="pl-ent">show_channel_urls</span>: <span class="pl-c1">true</span></pre></div>
+<p>这里的关键点：</p>
+<ul>
+<li><code class="notranslate">nodefaults</code>：明确禁用 <code class="notranslate">defaults</code>，不再访问官方源。</li>
+<li><code class="notranslate">conda-forge</code>：社区维护，包新且全。</li>
+<li><code class="notranslate">pytorch</code>：PyTorch 相关 Conda 包。</li>
+<li><code class="notranslate">default_channels</code> 和 <code class="notranslate">custom_channels</code>：指向清华镜像，提升国内下载速度。</li>
+<li><code class="notranslate">show_channel_urls: true</code>：安装时显示包来自哪个源，便于排查。</li>
+</ul>
+<ol start="4">
+<li><strong>重启命令行窗口</strong>，执行：</li>
+</ol>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">conda config --show channels</pre></div>
+<p>如果只显示 <code class="notranslate">conda-forge</code> 和 <code class="notranslate">pytorch</code>，说明彻底成功。</p>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>只用 <code class="notranslate">defaults</code>：国内下载慢，SSL 报错多，repodata 解析失败概率高。</li>
+<li>只删除用户级 <code class="notranslate">.condarc</code> 中的 <code class="notranslate">defaults</code>：系统级和 <code class="notranslate">condarc.d</code> 可能继续生效。</li>
+<li>不执行 <code class="notranslate">--show-sources</code>：根本不知道哪个配置在起作用。</li>
+<li>不重启命令行：旧进程仍使用旧配置。</li>
+<li>多个镜像源混用：元数据可能不一致，依赖解析更容易失败。</li>
+</ul>
+<h3>2.3 验证配置是否生效</h3>
+<p>建议每次大改配置后都执行：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">conda config --show-sources
+conda config --show channels
+conda info</pre></div>
+<p>确认：</p>
+<ul>
+<li>没有 <code class="notranslate">defaults</code>；</li>
+<li>channel 顺序符合预期；</li>
+<li><code class="notranslate">conda info</code> 中的 <code class="notranslate">base environment</code> 和 <code class="notranslate">channel URLs</code> 正确；</li>
+<li>没有意外的系统级配置。</li>
+</ul>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>不验证就继续建环境：后面报错时根本不知道源头。</li>
+<li>看到 <code class="notranslate">defaults</code> 还在却忽略：后面 SSL、repodata 问题会反复出现。</li>
+</ul>
+<hr>
+<h2>三、环境迁移策略：为何不能直接运行 YAML？</h2>
+<p>最初我从 Anaconda 导出了所有环境的 YAML 文件：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">py39.yaml
+tire.yaml
+labelme.yaml
+</code></pre>
+<p>直接尝试：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">conda env create -f py39.yaml</pre></div>
+<p>时，遭遇了三大致命错误。</p>
+<h3>3.1 YAML 不是跨平台“镜像”</h3>
+<p><code class="notranslate">conda env export</code> 会导出：</p>
+<ul>
+<li>精确到 build 的包版本；</li>
+<li>channel 信息；</li>
+<li>pip 安装的包列表；</li>
+<li>平台相关依赖。</li>
+</ul>
+<p>这意味着 YAML 在另一台机器、另一个系统、另一个 CUDA 环境下，很可能无法复现。尤其是 Windows、Linux、macOS 之间，很多包的 build 完全不同。</p>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>把 YAML 当 Docker 镜像：以为一键恢复，实际一键报错。</li>
+<li>不区分平台：<code class="notranslate">win-64</code> 的包在 Linux 上找不到。</li>
+<li>不清理 pip 段：pip 依赖解析可能陷入死锁。</li>
+</ul>
+<h3>3.2 网络中断</h3>
+<p>YAML 中包含 PyTorch 2.5.1 及 CUDA 库，体积高达 1GB 以上。国内网络下载极易触发：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">ConnectionResetError: 10054
+IncompleteRead
+</code></pre>
+<p>一旦中断，Conda 可能留下半成品缓存，后续重试更慢，甚至出现包损坏。</p>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>反复全量 <code class="notranslate">conda env create</code>：每次都可能重新解析、重新下载，效率极低。</li>
+<li>不清理缓存：坏包残留，后续安装莫名失败。</li>
+<li>不用断点续传：大包下载失败后从头再来。</li>
+</ul>
+<h3>3.3 Pip 依赖死锁（<code class="notranslate">py39</code> 环境）</h3>
+<p>YAML 中指定了：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">sympy==1.13.1
+</code></pre>
+<p>但：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">onnxslim==0.1.59 要求 sympy&gt;=1.13.3
+</code></pre>
+<p>Pip 在尝试寻找兼容版本时陷入死循环，报错：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">ResolutionImpossible
+</code></pre>
+<p>这是典型的依赖死锁：</p>
+<ul>
+<li>PyTorch 2.5.1 依赖 <code class="notranslate">sympy==1.13.1</code>；</li>
+<li><code class="notranslate">onnxslim</code> 要求 <code class="notranslate">sympy&gt;=1.13.3</code>；</li>
+<li>两者无法同时满足；</li>
+<li>Pip 回溯大量版本后放弃。</li>
+</ul>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>直接 <code class="notranslate">pip install -r requirements.txt</code>：遇到死锁就卡死。</li>
+<li>盲目升级 <code class="notranslate">sympy</code>：可能破坏 PyTorch 依赖。</li>
+<li>盲目降级 <code class="notranslate">onnxslim</code>：可能缺少需要的功能。</li>
+<li>不锁核心版本：每次安装结果都可能不同。</li>
+</ul>
+<h3>3.4 Conda 依赖死锁（<code class="notranslate">tire</code> 环境）</h3>
+<p>YAML 中：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">pandas=2.2.3
+</code></pre>
+<p>明确要求：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">python&gt;=3.10
+</code></pre>
+<p>但环境是：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">python=3.9.23
+</code></pre>
+<p>直接不兼容。</p>
+<p>同时：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">mkl-service
+mkl_random
+</code></pre>
+<p>对 <code class="notranslate">mkl</code> 基础库的版本要求截然不同，导致：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">LibMambaUnsatisfiableError
+</code></pre>
+<p>Conda 的新求解器 LibMamba 虽然快，但遇到硬冲突时依然无法求解。</p>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>强行让 Conda 求解：可能长时间卡住，最后仍失败。</li>
+<li>手动降级 <code class="notranslate">pandas</code>：可能又和其他包冲突。</li>
+<li>混用 Conda 和 Pip 的 MKL/NumPy：底层库冲突，运行时报错更隐蔽。</li>
+</ul>
+<h3>3.5 黄金法则</h3>
+<p><strong>不要盲目使用全量 YAML 恢复环境！</strong></p>
+<p>策略转换为：</p>
+<blockquote>
+<p><strong>Conda 管基础环境（Python），Pip 管复杂包（尤其是 PyTorch 和底层依赖）。分批安装，逐个击破。</strong></p>
+</blockquote>
+<p>具体原则：</p>
+<ol>
+<li>Conda 只负责 Python 本体和少量系统库；</li>
+<li>PyTorch、TensorFlow、ONNX、Ultralytics、Labelme 等用 Pip；</li>
+<li>先锁核心依赖，再装外围工具；</li>
+<li>遇到冲突工具，用 <code class="notranslate">--no-deps</code> 保护主框架；</li>
+<li>每装一批就验证一次 <code class="notranslate">import</code>。</li>
+</ol>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>全量 YAML 一键恢复：看似省事，实则把控制权交给解析器。</li>
+<li>所有包都交给 Conda：复杂框架的 CUDA 版本往往不匹配。</li>
+<li>所有包都交给 Pip：某些系统级库可能缺少。</li>
+<li>不记录版本：下次复现困难。</li>
+</ul>
+<hr>
+<h2>四、实战案例：从零完美移植 <code class="notranslate">py39</code> 环境</h2>
+<p>以下是 <code class="notranslate">py39</code> 环境（Python 3.9 + PyTorch 2.5.1 + CUDA 12.1）从零开始的完整命令与步骤，彻底避开依赖冲突和网络断连。</p>
+<h3>目标环境</h3>
+<ul>
+<li>Python 3.9.23</li>
+<li>PyTorch 2.5.1+cu121</li>
+<li>torchvision 0.20.1</li>
+<li>torchaudio 2.5.1</li>
+<li>ONNX 1.17.0</li>
+<li>onnxruntime / onnxruntime-gpu 1.19.2</li>
+<li>Ultralytics 8.0.124</li>
+<li>Labelme 5.8.1</li>
+<li>NumPy 1.26.4</li>
+<li>Pandas 2.3.0</li>
+<li>SciPy 1.13.1</li>
+<li>OpenCV 4.11.0.86</li>
+<li>其他 CV、标注、科学计算依赖</li>
+</ul>
+<h3>第一步：创建纯 Conda 基础环境</h3>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">conda create -n py39 python=3.9.23 -y
+conda activate py39</pre></div>
+<p><strong>为什么这样做？</strong></p>
+<p>只让 Conda 创建 Python 本体，不引入 PyTorch、TensorFlow、MKL 等复杂依赖。这样环境最干净，后续 Pip 安装时可控性最高。</p>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>直接 <code class="notranslate">conda create -n py39 pytorch ...</code>：Conda 可能从镜像源拿到非 CUDA 版本，或者依赖解析引入大量 MKL 包。</li>
+<li>在 base 里直接装：污染 base，后期无法收拾。</li>
+<li>不指定 Python 小版本：不同小版本可能影响二进制兼容性。</li>
+</ul>
+<h3>第二步：手动安装 PyTorch（必须用官方源）</h3>
+<p>不要使用清华源安装 PyTorch，因为国内镜像往往没有带有 <code class="notranslate">+cu121</code> 后缀的 CUDA 版本 whl 包。</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">pip install torch<span class="pl-k">==</span>2.5.1 torchvision<span class="pl-k">==</span>0.20.1 torchaudio<span class="pl-k">==</span>2.5.1 --index-url https://download.pytorch.org/whl/cu121</pre></div>
+<p><em>提示：下载 1.2GB 的 torch 包时，如中途断连卡死，按 <code class="notranslate">Ctrl+C</code> 终止，重新执行此命令，pip 会自动利用缓存断点续传。</em></p>
+<p><strong>为什么这样做？</strong></p>
+<p>PyTorch 官方为不同 CUDA 版本提供独立 whl 索引。<code class="notranslate">--index-url https://download.pytorch.org/whl/cu121</code> 能确保安装的是 CUDA 12.1 版本，而不是 CPU 版本。</p>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>用清华源装 PyTorch：可能只有 CPU 版，或者没有 <code class="notranslate">+cu121</code> 后缀。</li>
+<li>用 Conda 装 PyTorch：channel 复杂，容易和 MKL 冲突。</li>
+<li>不指定版本：可能装到最新版，和 CUDA 驱动不匹配。</li>
+<li>不检查 <code class="notranslate">CUDA: True</code>：等到训练时才发现是 CPU 版。</li>
+</ul>
+<h3>第三步：锁死 <code class="notranslate">sympy</code> 版本（解决 Pip 冲突关键）</h3>
+<p>PyTorch 2.5.1 依赖 <code class="notranslate">sympy==1.13.1</code>。必须在安装其他工具前先锁死这个版本：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">pip install sympy<span class="pl-k">==</span>1.13.1 mpmath<span class="pl-k">==</span>1.3.0 -i https://pypi.tuna.tsinghua.edu.cn/simple</pre></div>
+<p><strong>为什么这样做？</strong></p>
+<p>后面安装 <code class="notranslate">onnxslim</code> 时，它要求 <code class="notranslate">sympy&gt;=1.13.3</code>。如果你先装 <code class="notranslate">onnxslim</code>，Pip 可能升级 <code class="notranslate">sympy</code>，破坏 PyTorch 的依赖约束。先锁死 <code class="notranslate">sympy==1.13.1</code>，再对 <code class="notranslate">onnxslim</code> 使用 <code class="notranslate">--no-deps</code>，可以保护 PyTorch。</p>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>不锁 <code class="notranslate">sympy</code>：Pip 可能自动升级，导致 PyTorch 依赖警告或运行异常。</li>
+<li>先装 <code class="notranslate">onnxslim</code>：直接触发 <code class="notranslate">ResolutionImpossible</code>。</li>
+<li>强行升级 PyTorch：可能引入新的 CUDA 和依赖问题。</li>
+</ul>
+<h3>第四步：分批安装基础科学计算包（清华源）</h3>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">pip install numpy<span class="pl-k">==</span>1.26.4 pandas<span class="pl-k">==</span>2.3.0 scipy<span class="pl-k">==</span>1.13.1 matplotlib<span class="pl-k">==</span>3.9.4 scikit-learn<span class="pl-k">==</span>1.6.1 scikit-image<span class="pl-k">==</span>0.24.0 seaborn<span class="pl-k">==</span>0.13.2 tqdm<span class="pl-k">==</span>4.67.1 -i https://pypi.tuna.tsinghua.edu.cn/simple</pre></div>
+<p><strong>为什么这样做？</strong></p>
+<p>NumPy 1.26.4 是很多旧版 CV、标注工具的兼容分水岭。NumPy 2.x 虽然新，但会强制要求 OpenCV、SciPy、Scikit-image 等升级，容易引发连锁冲突。分批安装也便于定位错误。</p>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>直接装 NumPy 2.x：<code class="notranslate">opencv-python==4.12</code> 可能要求 <code class="notranslate">numpy&gt;=2</code>，与旧工具冲突。</li>
+<li>一次装几十个包：Pip 回溯爆炸，耗时长，错误难定位。</li>
+<li>不指定版本：不同时间安装结果不同。</li>
+</ul>
+<h3>第五步：安装 ONNX 核心包（先不管 <code class="notranslate">onnxslim</code>）</h3>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">pip install onnx<span class="pl-k">==</span>1.17.0 onnxruntime<span class="pl-k">==</span>1.19.2 onnxruntime-gpu<span class="pl-k">==</span>1.19.2 -i https://pypi.tuna.tsinghua.edu.cn/simple</pre></div>
+<p><strong>为什么这样做？</strong></p>
+<p>ONNX 负责模型格式，ONNX Runtime 负责推理。<code class="notranslate">onnxruntime-gpu</code> 提供 GPU 推理能力，但依赖 CUDA/cuDNN。先装核心包，确保基础推理可用，再处理 <code class="notranslate">onnxslim</code> 这种依赖冲突工具。</p>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>只装 <code class="notranslate">onnxruntime</code>：GPU 不可用。</li>
+<li>只装 <code class="notranslate">onnxruntime-gpu</code>：某些环境可能需要 CPU fallback。</li>
+<li>版本不匹配 CUDA：运行时报 <code class="notranslate">cudnn</code>、<code class="notranslate">cublas</code> 错误。</li>
+</ul>
+<h3>第六步：安装 CV 与标注工具链</h3>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">pip install ultralytics<span class="pl-k">==</span>8.0.124 ultralytics-thop<span class="pl-k">==</span>2.0.14 thop<span class="pl-k">==</span>0.1.1-2209072238 -i https://pypi.tuna.tsinghua.edu.cn/simple
+pip install labelme<span class="pl-k">==</span>5.8.1 pyqt5<span class="pl-k">==</span>5.15.11 pyqt5-qt5<span class="pl-k">==</span>5.15.2 pyqt5-sip<span class="pl-k">==</span>12.17.0 -i https://pypi.tuna.tsinghua.edu.cn/simple
+pip install opencv-python<span class="pl-k">==</span>4.11.0.86 pillow<span class="pl-k">==</span>10.4.0 imageio<span class="pl-k">==</span>2.37.0 imgviz<span class="pl-k">==</span>1.7.6 natsort<span class="pl-k">==</span>8.4.0 loguru<span class="pl-k">==</span>0.7.3 gdown<span class="pl-k">==</span>5.2.0 kaggle<span class="pl-k">==</span>1.7.4.5 -i https://pypi.tuna.tsinghua.edu.cn/simple</pre></div>
+<p><strong>为什么这样做？</strong></p>
+<p>Ultralytics、Labelme、PyQt5、OpenCV 之间版本敏感。尤其是：</p>
+<ul>
+<li>Labelme 依赖 PyQt5；</li>
+<li>OpenCV 与 NumPy 版本强相关；</li>
+<li>Ultralytics 依赖 THOP、Matplotlib、Pillow 等。</li>
+</ul>
+<p>分批安装可以避免一次性解析所有依赖。</p>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>装 <code class="notranslate">opencv-python==4.12.0.88</code>：它可能要求 <code class="notranslate">numpy&gt;=2</code>，与 <code class="notranslate">numpy==1.26.4</code> 冲突。</li>
+<li>不锁 PyQt5：可能装到不兼容版本，Labelme 无法启动。</li>
+<li>混用 <code class="notranslate">opencv-python</code> 和 <code class="notranslate">opencv-contrib-python</code>：容易冲突。</li>
+</ul>
+<h3>第七步：强制安装 <code class="notranslate">onnxslim</code>（化解死锁）</h3>
+<p>由于 <code class="notranslate">onnxslim</code> 要求的 <code class="notranslate">sympy&gt;=1.13.3</code> 会破坏 PyTorch，我们使用 <code class="notranslate">--no-deps</code> 强行安装它，不升级其依赖：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">pip install onnxslim<span class="pl-k">==</span>0.1.59 --no-deps -i https://pypi.tuna.tsinghua.edu.cn/simple</pre></div>
+<p><strong>为什么这样做？</strong></p>
+<p><code class="notranslate">onnxslim</code> 是一个模型简化工具，它的依赖声明与 PyTorch 的 <code class="notranslate">sympy==1.13.1</code> 冲突。使用 <code class="notranslate">--no-deps</code> 表示：</p>
+<ul>
+<li>只安装 <code class="notranslate">onnxslim</code> 本身；</li>
+<li>不安装或升级它声明的依赖；</li>
+<li>保护已经锁定的 <code class="notranslate">sympy</code>、<code class="notranslate">onnx</code> 等核心包。</li>
+</ul>
+<p>这不是“乱来”，而是在明确知道风险的情况下，优先保护主框架。</p>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>直接 <code class="notranslate">pip install onnxslim</code>：Pip 会尝试升级 <code class="notranslate">sympy</code>，可能破坏 PyTorch。</li>
+<li>放弃 <code class="notranslate">onnxslim</code>：后续模型简化、转换流程可能缺失。</li>
+<li>升级 PyTorch 来适配：可能引入新的 CUDA、TorchVision 兼容问题。</li>
+</ul>
+<h3>第八步：终极验证</h3>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">python -c <span class="pl-s"><span class="pl-pds">"</span>import torch; import sympy; import onnx; print('Torch:', torch.__version__); print('CUDA:', torch.cuda.is_available()); print('Sympy:', sympy.__version__); print('ONNX:', onnx.__version__)<span class="pl-pds">"</span></span></pre></div>
+<p><strong>预期输出：</strong></p>
+<pre lang="text" class="notranslate"><code class="notranslate">Torch: 2.5.1+cu121
+CUDA: True
+Sympy: 1.13.1
+ONNX: 1.17.0
+</code></pre>
+<p>看到 <code class="notranslate">CUDA: True</code>，标志着这个最复杂的环境移植彻底成功。</p>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>不验证：等到训练时才发现 CUDA 不可用。</li>
+<li>只看 <code class="notranslate">pip list</code>：版本对不代表能 <code class="notranslate">import</code>。</li>
+<li>不检查 <code class="notranslate">sympy</code>：可能已被 <code class="notranslate">onnxslim</code> 升级，留下隐患。</li>
+</ul>
+<hr>
+<h2>五、其他环境避坑指南（Tire &amp; Labelme）</h2>
+<h3>5.1 Tire 环境（多框架共存：PyTorch + TensorFlow）</h3>
+<p>Tire 环境需要同时支持 PyTorch 和 TensorFlow，这是最容易出现依赖死锁的场景之一。</p>
+<h4>错误 1：Conda 安装 MKL 体系导致 <code class="notranslate">LibMambaUnsatisfiableError</code></h4>
+<p>执行：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">conda install mkl...</pre></div>
+<p>时遭遇：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">LibMambaUnsatisfiableError
+</code></pre>
+<p>因为 <code class="notranslate">mkl-service</code> 与 <code class="notranslate">mkl_random</code> 互相锁死版本，而它们又依赖不同版本的 <code class="notranslate">mkl</code> 基础库。</p>
+<p><strong>解决：</strong></p>
+<p><strong>放弃 Conda 安装 MKL 体系</strong>，直接用：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">pip install numpy pandas matplotlib scipy</pre></div>
+<p>Pip 的 NumPy 自带独立的 MKL/OpenBLAS 库，完美避开 Conda 的 MKL 死锁。</p>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>强行 Conda 安装 MKL：求解器可能长时间卡住，最后仍失败。</li>
+<li>手动降级 <code class="notranslate">mkl</code>：可能导致 NumPy、SciPy 运行异常。</li>
+<li>混用 Conda 和 Pip 的 NumPy：底层 BLAS 库冲突，运行时报错隐蔽。</li>
+</ul>
+<h4>错误 2：<code class="notranslate">pip install tensorflow-base</code> 找不到包</h4>
+<p>报错：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">No matching distribution found
+</code></pre>
+<p>原因是 <code class="notranslate">tensorflow-base</code> 是 Conda 特有的包名，Pip 源里只有 <code class="notranslate">tensorflow</code>。</p>
+<p><strong>解决：</strong></p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">pip install tensorflow<span class="pl-k">==</span>2.18.1 keras<span class="pl-k">==</span>3.6.0</pre></div>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>继续搜索 <code class="notranslate">tensorflow-base</code>：Pip 永远找不到。</li>
+<li>装 <code class="notranslate">tf-nightly</code>：版本不稳定，依赖更复杂。</li>
+<li>不锁 Keras 版本：TensorFlow 2.18 与 Keras 3.x 有兼容要求。</li>
+</ul>
+<h4>错误 3：Protobuf 终极死锁</h4>
+<ul>
+<li>TF 2.18.1 要求 <code class="notranslate">protobuf&gt;=4.21.0</code>；</li>
+<li><code class="notranslate">tf2onnx 1.16.1</code> 要求 <code class="notranslate">protobuf&lt;=3.20.2</code>；</li>
+<li>同时 <code class="notranslate">onnxslim</code> 与 <code class="notranslate">sympy 1.13.1</code> 冲突。</li>
+</ul>
+<p><strong>解决：</strong></p>
+<ol>
+<li>强行装新版 protobuf：</li>
+</ol>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">pip install <span class="pl-s"><span class="pl-pds">"</span>protobuf&gt;=4.21.0,&lt;6.0.0<span class="pl-pds">"</span></span> onnx<span class="pl-k">==</span>1.17.0 -i https://pypi.tuna.tsinghua.edu.cn/simple</pre></div>
+<ol start="2">
+<li>无视依赖，强行装 <code class="notranslate">tf2onnx</code>：</li>
+</ol>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">pip install tf2onnx<span class="pl-k">==</span>1.16.1 --no-deps -i https://pypi.tuna.tsinghua.edu.cn/simple</pre></div>
+<p><strong>结果：</strong></p>
+<p>验证成功输出：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">Torch: 2.5.1+cu121
+TF: 2.18.1
+CUDA: True
+ONNX: 1.17.0
+</code></pre>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>强行降级 protobuf 到 3.20：TensorFlow 2.18 可能无法运行。</li>
+<li>强行升级 tf2onnx：可能引入不兼容的 ONNX 依赖。</li>
+<li>不用 <code class="notranslate">--no-deps</code>：Pip 会继续陷入死锁。</li>
+</ul>
+<h3>5.2 Labelme 环境（轻量图像标注）</h3>
+<p>Labelme 本身不复杂，但它对 PyQt5、OpenCV、NumPy 的版本很敏感。</p>
+<h4>错误：<code class="notranslate">opencv-python==4.12.0.88</code> 强制要求 <code class="notranslate">numpy&gt;=2</code></h4>
+<p>与锁定的：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">numpy==1.26.4
+</code></pre>
+<p>冲突，导致：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">ResolutionImpossible
+</code></pre>
+<p><strong>解决：</strong></p>
+<p><strong>降低 <code class="notranslate">opencv-python</code> 版本以适配 <code class="notranslate">numpy</code></strong>。执行：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">pip install numpy<span class="pl-k">==</span>1.26.4 pillow<span class="pl-k">==</span>11.3.0 labelme<span class="pl-k">==</span>5.2.1 pyqt5<span class="pl-k">==</span>5.15.11 pyqt5-qt5<span class="pl-k">==</span>5.15.2 pyqt5-sip<span class="pl-k">==</span>12.17.0 opencv-python<span class="pl-k">==</span>4.10.0.84 scikit-image<span class="pl-k">==</span>0.24.0 scikit-learn<span class="pl-k">==</span>1.6.1 scipy<span class="pl-k">==</span>1.13.1 matplotlib<span class="pl-k">==</span>3.9.4 imgviz<span class="pl-k">==</span>1.7.5 natsort<span class="pl-k">==</span>8.4.0 loguru<span class="pl-k">==</span>0.7.3 gdown<span class="pl-k">==</span>5.2.0 osam<span class="pl-k">==</span>0.2.4 onnxruntime<span class="pl-k">==</span>1.19.2 -i https://pypi.tuna.tsinghua.edu.cn/simple</pre></div>
+<p><strong>其他做法的坏处：</strong></p>
+<ul>
+<li>升级 NumPy 到 2.x：可能破坏其他依赖旧 NumPy 的工具。</li>
+<li>强行装最新 OpenCV：与 NumPy 1.26.4 冲突。</li>
+<li>不锁 PyQt5：Labelme 可能无法启动或界面异常。</li>
+</ul>
+<hr>
+<h2>六、总结与避坑宝典</h2>
+<p>（图方便直接让蓝色大肥鱼总结了……请不要期待一只脆脆鲨的总结能力）：</p>
+<ol>
+<li>
+<p><strong>精简 Conda，禁用 <code class="notranslate">defaults</code></strong><br>
+遇到 <code class="notranslate">defaults</code> 频道报错或 SSL 错误，请检查系统级和用户级 <code class="notranslate">.condarc</code>，用 <code class="notranslate">nodefaults</code> 和清华源彻底替换，不留死角。<br>
+<strong>其他做法的坏处</strong>：只改一个文件、不查 <code class="notranslate">--show-sources</code>，问题会反复出现。</p>
+</li>
+<li>
+<p><strong>隔离 <code class="notranslate">PYTHONPATH</code></strong><br>
+不要让全局的 <code class="notranslate">PYTHONPATH</code> 污染 Conda 环境。如果在特定环境需要 <code class="notranslate">modelscope</code>，请使用：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">conda env config vars <span class="pl-k">set</span> <span class="pl-smi">PYTHONPATH</span><span class="pl-k">=</span> -n 环境名</pre></div>
+<p>单独处理。<br>
+<strong>其他做法的坏处</strong>：全局污染会导致 Conda 自身加载错误版本的 <code class="notranslate">urllib3</code>、<code class="notranslate">requests</code>，引发 SSL 和依赖异常。</p>
+</li>
+<li>
+<p><strong>拒绝全量 YAML</strong><br>
+复现环境时，优先使用 <code class="notranslate">conda create</code> 建 Python，然后用 <code class="notranslate">pip</code> 分批装库。这样可以完全掌控依赖解析过程。<br>
+<strong>其他做法的坏处</strong>：全量 YAML 容易遇到平台不兼容、网络中断、依赖死锁，排错成本极高。</p>
+</li>
+<li>
+<p><strong>区分 Pip 与 Conda 的安装策略</strong></p>
+<ul>
+<li><strong>Conda 负责</strong>：Python 本体，以及简单的系统库。</li>
+<li><strong>Pip 负责</strong>：PyTorch、TensorFlow、ONNX 等高阶框架（使用官方源或国内镜像源）。<br>
+<strong>其他做法的坏处</strong>：把复杂框架交给 Conda，容易遇到 CUDA 版本不对、MKL 冲突；把系统库全交给 Pip，可能缺少底层支持。</li>
+</ul>
+</li>
+<li>
+<p><strong>遇到依赖死锁的解药</strong><br>
+谁报错，就单独把它拎出来。如果确实需要安装一个会破坏核心依赖（如 <code class="notranslate">sympy</code> 或 <code class="notranslate">protobuf</code>）的工具（如 <code class="notranslate">onnxslim</code> 或 <code class="notranslate">tf2onnx</code>），<strong>使用 <code class="notranslate">pip install 包名 --no-deps</code> 强行安装，忽略其依赖</strong>，以保护主框架的完整。<br>
+<strong>其他做法的坏处</strong>：盲目让 Pip 求解，可能升级或降级核心包，导致 PyTorch、TensorFlow 无法运行。</p>
+</li>
+<li>
+<p><strong>不要迷信依赖解析器的报错</strong><br>
+只要核心框架（Torch/TF）在 <code class="notranslate">import</code> 后能跑通，<code class="notranslate">pip</code> 红字警告和 <code class="notranslate">oneDNN</code> 提示完全可以无视。<br>
+<strong>其他做法的坏处</strong>：为了消除所有警告而反复调整版本，可能把原本稳定的环境搞崩。</p>
+</li>
+</ol>
+<p>2026.9.23 stone<br>
+CUDA: True</p>
+<pre class="notranslate"><code class="notranslate"></code></pre></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://HU-SHD.github.io/shihaodong.github.io">石浩东的个人博客</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","HU-SHD/shihaodong.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>
