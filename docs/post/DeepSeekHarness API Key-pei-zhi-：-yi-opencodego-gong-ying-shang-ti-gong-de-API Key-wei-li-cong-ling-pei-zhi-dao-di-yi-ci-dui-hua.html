@@ -10,12 +10,10 @@
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
     </script>
-<meta name="description" content="# DeepSeekHarness API Key配置：以opencodego供应商提供的API Key为例从零配置到第一次对话
-
+<meta name="description" content="
 DSH（DeepSeek Harness）本身不带模型额度。">
 <meta property="og:title" content="DeepSeekHarness API Key配置：以opencodego供应商提供的API Key为例从零配置到第一次对话">
-<meta property="og:description" content="# DeepSeekHarness API Key配置：以opencodego供应商提供的API Key为例从零配置到第一次对话
-
+<meta property="og:description" content="
 DSH（DeepSeek Harness）本身不带模型额度。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://HU-SHD.github.io/shihaodong.github.io/post/DeepSeekHarness%20API%20Key-pei-zhi-%EF%BC%9A-yi-opencodego-gong-ying-shang-ti-gong-de-API%20Key-wei-li-cong-ling-pei-zhi-dao-di-yi-ci-dui-hua.html">
@@ -87,8 +85,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 </div>
     <div id="content">
-<div class="markdown-body" id="postBody"><h1>DeepSeekHarness API Key配置：以opencodego供应商提供的API Key为例从零配置到第一次对话</h1>
-<p>DSH（DeepSeek Harness）本身不带模型额度。它把「模型」交给一个个<strong>提供商（Provider）</strong>：每个提供商对应一个 API 地址、一套鉴权方式和一组模型。你要做的，就是把某个提供商的 API Key 交给 DSH。</p>
+<div class="markdown-body" id="postBody"><p>DSH（DeepSeek Harness）本身不带模型额度。它把「模型」交给一个个<strong>提供商（Provider）</strong>：每个提供商对应一个 API 地址、一套鉴权方式和一组模型。你要做的，就是把某个提供商的 API Key 交给 DSH。</p>
 <p>本文用 <strong>OpenCode Go</strong> 完整走一遍流程，最后再给出一节通用写法，换成任何 OpenAI / Anthropic 兼容的服务都能套用。</p>
 <blockquote>
 <p><strong>关于截图</strong>：文中所有截图均为脱敏示意图，API Key、账号、邮箱等信息已打码或替换为占位符。你按图操作时，请务必也养成「先打码再截图」的习惯——原因见文末的安全清单。</p>

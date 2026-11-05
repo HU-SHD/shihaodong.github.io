@@ -1,4 +1,3 @@
-# DeepSeekHarness API Key配置：以opencodego供应商提供的API Key为例从零配置到第一次对话
 
 DSH（DeepSeek Harness）本身不带模型额度。它把「模型」交给一个个**提供商（Provider）**：每个提供商对应一个 API 地址、一套鉴权方式和一组模型。你要做的，就是把某个提供商的 API Key 交给 DSH。
 
