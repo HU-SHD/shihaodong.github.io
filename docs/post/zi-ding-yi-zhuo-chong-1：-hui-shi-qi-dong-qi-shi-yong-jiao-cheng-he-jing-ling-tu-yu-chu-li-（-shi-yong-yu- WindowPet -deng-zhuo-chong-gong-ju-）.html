@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/218474709?v=4&size=64"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="这个教程会有至少两篇，内容主要是围绕如何自定义一个独属于自己、独一无二的桌宠。">
+<meta property="og:title" content="自定义桌宠1：绘世启动器使用教程和精灵图预处理（适用于 WindowPet 等桌宠工具）">
+<meta property="og:description" content="这个教程会有至少两篇，内容主要是围绕如何自定义一个独属于自己、独一无二的桌宠。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://HU-SHD.github.io/shihaodong.github.io/post/zi-ding-yi-zhuo-chong-1%EF%BC%9A-hui-shi-qi-dong-qi-shi-yong-jiao-cheng-he-jing-ling-tu-yu-chu-li-%EF%BC%88-shi-yong-yu-%20WindowPet%20-deng-zhuo-chong-gong-ju-%EF%BC%89.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/218474709?v=4&size=64">
+<title>自定义桌宠1：绘世启动器使用教程和精灵图预处理（适用于 WindowPet 等桌宠工具）</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">自定义桌宠1：绘世启动器使用教程和精灵图预处理（适用于 WindowPet 等桌宠工具）</h1>
+<div class="title-right">
+    <a href="https://HU-SHD.github.io/shihaodong.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/HU-SHD/shihaodong.github.io/issues/12" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p>这个教程会有至少两篇，内容主要是围绕如何自定义一个独属于自己、独一无二的桌宠。从形象设计、图片生成、多帧率精灵图制作到开源桌宠工具、WindowPet自定义配置全覆盖，或许还会有模型增强、高帧率精灵图制作教学等内容（画大饼）。当然，为了省事，博客内容也使用AI进行辅助编写。</p>
+<p>我答应了要做一个独一无二的桌宠，一个天使的桌宠，这样每天都能感觉她在陪我（嘻嘻）。</p>
+<p>从3D建模到live2D，折腾了一圈之后发现：<strong>主流图片类桌宠（比如 WindowPet）根本不需要这些，它要的只是一张「精灵图」</strong>，负责把若干张动作帧横向排开的一张 PNG图片就够了。</p>
+<p>所以制作过程就变成三步了：</p>
+<ol>
+<li>用 <strong>绘世启动器</strong>（A绘世整合包）跑 Stable Diffusion，生成一张 Q 版天使立绘；</li>
+<li>抠成透明 PNG，再拆成/补成一组动作帧；</li>
+<li>拼成一张精灵图，交给桌宠程序。</li>
+</ol>
+<p>这篇讲第 1、2 步，以及精灵图的规格与预处理细节。桌宠那边的安装配置在另一篇。</p>
+<p>![绘世启动器主界面：左侧是分类入口，中间是文件夹快捷入口，右下角是「一键启动」，底部显示启动器与 WebUI 版本]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/9f206b55-c1dd-4b79-bbfb-7325f885ef57"><img width="768" height="525" alt="01-huishi-launcher" src="https://github.com/user-attachments/assets/9f206b55-c1dd-4b79-bbfb-7325f885ef57" style="max-width: 100%; height: auto; max-height: 525px;; aspect-ratio: 768 / 525; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<hr>
+<h2>一、先搞清楚桌宠要的是什么</h2>
+<p>WindowPet 这类工具读取的是「精灵图（sprite sheet）+ 动作帧范围」：</p>
+<ul>
+<li><strong>精灵图</strong>：一张 PNG，横向排列 N 个小方格，每格一帧，每格是正方形（本例 256×256）；</li>
+<li><strong>动作帧范围</strong>：告诉程序「idle 用第 1<del>2 帧、walk 用第 3</del>4 帧、jump 用第 5 帧」。</li>
+</ul>
+<p>也就是说，你要给的不是一段视频、不是 3D 模型，而是<strong>同一角色的若干张姿态图</strong>。这正好是 AI 生图 + 简单图像处理能覆盖的范围。</p>
+<p>所以整条链路是：<strong>文生图 → 选图 → 抠图 → 拆帧/补帧 → 拼图</strong>。</p>
+<hr>
+<h2>二、绘世启动器：它到底替你做了什么</h2>
+<p>绘世启动器（A绘世，秋叶整合包的图形壳）本质上是个「Stable Diffusion WebUI 启动器 + 环境管理器」，对新手最有用的是三件事：</p>
+<ol>
+<li><strong>一键启动</strong>：不用自己配 Python、torch、CUDA，点一下就把 WebUI 跑起来；</li>
+<li><strong>文件夹直达</strong>：根目录、扩展（extensions）、模型、文生图输出目录都能一键打开，省得自己翻路径；</li>
+<li><strong>高级选项 / 疑难解答 / 版本管理 / 模型管理</strong>：卡住的时候能从这里看启动参数、换版本、下模型。</li>
+</ol>
+<p>界面见开头的截图：左侧是一键启动按钮和分类，右侧是「文件夹」快捷入口（根目录、扩展文件夹、临时文件夹、文生图(网格)、文生图(单图)、图生图……）。启动之后浏览器会自动打开 <code class="notranslate">http://127.0.0.1:7860</code>，这就是 WebUI 的界面。</p>
+<blockquote>
+<p>小提示：整合包目录里常见的坑是模型放错位置。SD1.5 模型放 <code class="notranslate">models\Stable-diffusion\</code>，VAE 放 <code class="notranslate">models\VAE\</code>，LoRA 放 <code class="notranslate">models\Lora\</code>。绘世启动器的「模型管理」页面就是干这个的。</p>
+</blockquote>
+<hr>
+<h2>三、第一次启动会踩的坑：CLIP tokenizer 拉不下来</h2>
+<p>我这次是自己用命令行起的 API 服务而不是点「一键启动」，结果模型加载直接失败，日志里反复刷：</p>
+<pre class="notranslate"><code class="notranslate">OSError: Can't load tokenizer for 'openai/clip-vit-large-patch14'.
+...
+creating model quickly: OSError
+loading stable diffusion model: OSError
+</code></pre>
+<p>看日志其实是两件事叠加：</p>
+<ol>
+<li>WebUI 需要 HuggingFace 上的 <code class="notranslate">openai/clip-vit-large-patch14</code> tokenizer；</li>
+<li>这台机器 <code class="notranslate">huggingface.co</code> 是连不上的（<code class="notranslate">curl</code> 直接超时），于是它不断重试、进度条卡在 0%，ETA 显示 4800 多秒。</li>
+</ol>
+<p><strong>解法</strong>：把 HuggingFace 端点指到镜像站再启动，tokenizer 会自动下载到本地缓存，之后就不用联网了。</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate"><span class="pl-k">set</span> <span class="pl-smi">HF_ENDPOINT</span><span class="pl-k">=</span>https://hf-mirror.com
+<span class="pl-k">set</span> <span class="pl-smi">HF_HUB_DISABLE_TELEMETRY</span><span class="pl-k">=</span><span class="pl-c1">1</span>
+python\python.exe launch.py --api --nowebui --xformers --port <span class="pl-c1">7860</span> --skip-version-check --no-hashing</pre></div>
+<p>加上这两个环境变量后，启动时间从「卡死」变成 94 秒左右，模型 16 秒加载完，日志里能看到：</p>
+<pre class="notranslate"><code class="notranslate">Model loaded in 16.3s (load weights from disk: 0.1s, create model: 11.8s,
+apply weights to model: 3.2s, load textual inversion embeddings: 0.2s, ...)
+Startup time: 94.5s
+</code></pre>
+<p>顺带一提：<code class="notranslate">--nowebui</code> 只开 API 不开界面，适合脚本化；想用图形界面就把这个参数去掉，用绘世启动器的「一键启动」也行。</p>
+<hr>
+<h2>四、在 WebUI 里生成天使立绘</h2>
+<p>界面如下（中文界面，深色主题，模型已经加载成 <code class="notranslate">anything-v5</code>）：</p>
+<p>![WebUI 文生图界面：左上选模型（anything-v5），中间是正向/反向提示词——图里就是这次用的那组，提示词下方是自动解析出的词条标签]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/ef855f83-aad2-4e13-b153-fa638b44539a"><img width="1570" height="505" alt="02-webui-txt2img" src="https://github.com/user-attachments/assets/ef855f83-aad2-4e13-b153-fa638b44539a" style="max-width: 100%; height: auto; max-height: 505px;; aspect-ratio: 1570 / 505; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p>我用的参数（这组参数对 SD1.5 动漫模型比较稳）：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>参数</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>模型</td>
+<td><code class="notranslate">anything-v5</code>（SD1.5，二次元向）</td>
+</tr>
+<tr>
+<td>采样器</td>
+<td><code class="notranslate">DPM++ 2M Karras</code></td>
+</tr>
+<tr>
+<td>迭代步数</td>
+<td>28~30</td>
+</tr>
+<tr>
+<td>CFG Scale</td>
+<td>7</td>
+</tr>
+<tr>
+<td>尺寸</td>
+<td>512×768（竖构图，留出全身）</td>
+</tr>
+<tr>
+<td>批量</td>
+<td>4（一次出 4 张挑一张）</td>
+</tr>
+<tr>
+<td>种子</td>
+<td>-1（随机）</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><strong>正向提示词</strong>（描述角色 + 画风 + 背景，方便后面抠图）：</p>
+<pre class="notranslate"><code class="notranslate">masterpiece, best quality, 1girl, solo, chibi, full body, standing, front view,
+angel, white feathered wings, glowing halo, long brown hair, black round glasses,
+pink baseball cap, white dress, cute smile,
+pure white background, simple background, no shadow, cel shading, clean lineart, pastel colors
+</code></pre>
+<p><strong>反向提示词</strong>：</p>
+<pre class="notranslate"><code class="notranslate">(worst quality, low quality, normal quality:1.4), EasyNegative, badhandv4,
+(bad hands, bad anatomy:1.2), extra digits, multiple views, multiple girls,
+text, watermark, signature, blurry, jpeg artifacts, realistic, photo, 3d,
+cropped, out of frame, grey background, gradient background, shadow, floor, scenery, dark background
+</code></pre>
+<p>几个写提示词的经验：</p>
+<ul>
+<li><strong>一定要写 <code class="notranslate">pure white background</code> + <code class="notranslate">no shadow</code></strong>：纯色背景后面抠图几乎零成本，有渐变/阴影就要上更复杂的算法；</li>
+<li><strong>配饰要写死</strong>：<code class="notranslate">black round glasses</code>、<code class="notranslate">pink baseball cap</code>，不然模型会自由发挥，几批图之间角色对不上；</li>
+<li><strong><code class="notranslate">chibi</code> + <code class="notranslate">full body</code> + <code class="notranslate">front view</code></strong> 三件套决定构图，缺了 <code class="notranslate">full body</code> 容易出大头像，缺了 <code class="notranslate">front view</code> 会出侧身（桌宠左右走时会翻面，正面最稳）；</li>
+<li>负向里加 <code class="notranslate">grey background / shadow / floor</code> 能明显提高背景干净度。</li>
+</ul>
+<p>出一批 4 张，挑一张最像的：</p>
+<p>![挑中的原始立绘：粉白棒球帽 + 黑框眼镜 + 棕发 + 白裙 + 小翅膀]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/bf354c14-484d-47f2-93b5-19751eed31c8"><img width="512" height="768" alt="03-angel-raw" src="https://github.com/user-attachments/assets/bf354c14-484d-47f2-93b5-19751eed31c8" style="max-width: 100%; height: auto; max-height: 768px;; aspect-ratio: 512 / 768; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<hr>
+<h2>五、抠图：白底 → 透明 PNG</h2>
+<p>这一步是关键，<strong>精灵图必须是带透明通道的 RGBA PNG</strong>，否则桌宠周围会带一块白底/黑块。</p>
+<p>手工做法（GIMP，和大部分人习惯一致）：</p>
+<ol>
+<li>GIMP 打开图片 → 菜单「图层 → 透明 → 添加 Alpha 通道」；</li>
+<li>用「按颜色选择」（Select by Color）点背景，容差 30~40；</li>
+<li>反选，或者直接 <code class="notranslate">编辑 → 清除</code>；</li>
+<li>边缘用「选择 → 羽化 1px」再清除一次，避免锯齿；</li>
+<li>导出 PNG（记得勾选「保存色彩空间/透明」）。</li>
+</ol>
+<p>我实际用脚本做（可复现、能批处理），思路比"全图按颜色选中白色"稳一点：<br>
+<strong>逐行取图片左右边缘 12 列的中位色当作该行背景色</strong>（这样即使背景是渐变也能估准），<br>
+再只把「与画布边框连通」的候选背景删掉——这样角色身上的白裙子、白翅膀不会被误伤。</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-c"># 简化版核心逻辑</span>
+<span class="pl-s1">edge</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">concatenate</span>([<span class="pl-s1">rgb</span>[:, :<span class="pl-c1">12</span>, :], <span class="pl-s1">rgb</span>[:, <span class="pl-c1">-</span><span class="pl-c1">12</span>:, :]], <span class="pl-s1">axis</span><span class="pl-c1">=</span><span class="pl-c1">1</span>)
+<span class="pl-s1">bg_row</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">median</span>(<span class="pl-s1">edge</span>, <span class="pl-s1">axis</span><span class="pl-c1">=</span><span class="pl-c1">1</span>)                  <span class="pl-c"># 每行的背景色</span>
+<span class="pl-s1">diff</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">abs</span>(<span class="pl-s1">rgb</span> <span class="pl-c1">-</span> <span class="pl-s1">bg_row</span>[:, <span class="pl-c1">None</span>, :]).<span class="pl-c1">max</span>(<span class="pl-s1">axis</span><span class="pl-c1">=</span><span class="pl-c1">2</span>)
+<span class="pl-s1">cand</span> <span class="pl-c1">=</span> (<span class="pl-s1">diff</span> <span class="pl-c1">&lt;</span> <span class="pl-s1">tol</span>).<span class="pl-c1">astype</span>(<span class="pl-s1">np</span>.<span class="pl-c1">uint8</span>)              <span class="pl-c"># 候选背景</span>
+<span class="pl-s1">n</span>, <span class="pl-s1">lab</span> <span class="pl-c1">=</span> <span class="pl-s1">cv2</span>.<span class="pl-c1">connectedComponents</span>(<span class="pl-s1">cand</span>, <span class="pl-c1">8</span>)         <span class="pl-c"># 只保留和边框连通的</span>
+<span class="pl-s1">bg</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">isin</span>(<span class="pl-s1">lab</span>, <span class="pl-s1">border_labels</span>).<span class="pl-c1">astype</span>(<span class="pl-s1">np</span>.<span class="pl-c1">uint8</span>)
+<span class="pl-s1">alpha</span> <span class="pl-c1">=</span> (<span class="pl-c1">1</span> <span class="pl-c1">-</span> <span class="pl-s1">bg</span>) <span class="pl-c1">*</span> <span class="pl-c1">255</span></pre></div>
+<p>抠完是这样的（棋盘格背景是为了显示透明区）：</p>
+<p>![抠图结果：透明背景的 256×256 立绘]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/d39fc6a8-4949-4c24-885e-c3dbd352ca1a"><img width="256" height="256" alt="04-angel-cutout" src="https://github.com/user-attachments/assets/d39fc6a8-4949-4c24-885e-c3dbd352ca1a" style="max-width: 100%; height: auto; max-height: 256px;; aspect-ratio: 256 / 256; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<blockquote>
+<p><strong>两个细节</strong>：① 边缘会有 1px 的半透明白边，做精灵图时可以用「白底去除」（<code class="notranslate">C' = (C - (1-a)·255)/a</code>）再清一遍；② 阴影别留——桌宠是贴在桌面上的，自带阴影会显得脏。</p>
+</blockquote>
+<hr>
+<h2>六、从一张图到 5 帧动作</h2>
+<p>一张静态图也能当桌宠，但走起来就是"平移"。要做走路，就得有<strong>同一角色的多个姿态帧</strong>。</p>
+<h3>6.1 动作参考：拆开内置甘雨的 walk</h3>
+<p>WindowPet 内置的甘雨就是个标准样本。它的精灵图是 1664×1152、128 一格，walk 是第 2 行的 4 帧：</p>
+<p>![内置甘雨 walk 的 4 帧：接触 → 过渡 → 接触 → 过渡]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/3d2931ae-4358-4a12-84bc-322499545235"><img width="1596" height="454" alt="07-ganyu-walk-ref" src="https://github.com/user-attachments/assets/3d2931ae-4358-4a12-84bc-322499545235" style="max-width: 100%; height: auto; max-height: 454px;; aspect-ratio: 1596 / 454; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p>我顺手量了一下每帧脚的位置（脚部像素的 x 范围）：<code class="notranslate">51~86 → 58~83 → 54~85 → 51~86</code>，也就是说帧宽 128 的图里，<strong>两只脚横向摆动的幅度大约是帧宽的 27%</strong>；帧序是「两脚分开 → 并拢(一只脚在前) → 分开 → 最开」，即标准的 <strong>接触–过渡–接触–过渡</strong>。身体几乎不旋转，行走感来自腿的前后交替 + 轻微上下起伏。</p>
+<h3>6.2 保持形象不变的做法：只做局部重绘</h3>
+<p>整图重画一定会变成"另一个人"。所以我把<strong>腿部</strong>和<strong>翅膀</strong>各圈一个 mask，用 SD 的 <strong>inpaint（局部重绘）</strong> 只改这两个区域，脸、帽子、眼镜、头发、裙子一个像素都不动。</p>
+<p>关键是把「动作要点」写进提示词：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>帧</th>
+<th>提示词（在通用前缀后追加）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>① 接触（左脚前）</td>
+<td><code class="notranslate">walking, left leg forward, right leg back, legs slightly apart, stride</code></td>
+</tr>
+<tr>
+<td>② 过渡</td>
+<td><code class="notranslate">walking, passing pose, right foot lifted off the ground, left foot planted, legs close together</code></td>
+</tr>
+<tr>
+<td>③ 接触（右脚前）</td>
+<td><code class="notranslate">walking, right leg forward, left leg back, legs slightly apart, stride</code></td>
+</tr>
+<tr>
+<td>④ 过渡</td>
+<td><code class="notranslate">walking, passing pose, left foot lifted off the ground, right foot planted, legs close together</code></td>
+</tr>
+<tr>
+<td>⑤ 站立</td>
+<td><code class="notranslate">standing, both feet together, neutral pose</code></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>通用前缀（保持和原图一致）：</p>
+<pre class="notranslate"><code class="notranslate">masterpiece, best quality, chibi, 1girl, angel girl, white dress, front view,
+clean lineart, cel shading, flat colors, white ankle socks, white shoes, …
+</code></pre>
+<p>参数：<code class="notranslate">512×512、28 steps、CFG 7、DPM++ 2M Karras、mask blur 6、denoise 0.52</code>。<br>
+<strong>seed 固定成同一个值</strong>（我这里用 <code class="notranslate">20241115</code>），几帧之间的鞋子、腿型风格才不会打架。</p>
+<h3>6.3 合成时的三个小技巧</h3>
+<ol>
+<li><strong>用 alpha 合成，不要用 RGB 贴图</strong>：把重绘结果的 alpha 和羽化 mask 相乘再 <code class="notranslate">alpha_composite</code>，否则羽化边缘会把白背景混进来，成品一圈白毛边；</li>
+<li><strong>接触帧把腿的下半段向两侧撇开</strong>（512 坐标下约 13px，锚点在裙摆处），过渡帧不撇——这样才有"跨步"的横向幅度；</li>
+<li><strong>起伏</strong>：接触帧整体下移 1px、过渡帧上移 2px，模拟走路时重心的上下。</li>
+</ol>
+<p>拼出来 5 帧：</p>
+<p>![5 帧：接触 → 过渡 → 接触 → 过渡 → 站立]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/b6e7a6a0-c17e-4114-9ee2-8da08e6bad56"><img width="1340" height="326" alt="06-angel-5frames" src="https://github.com/user-attachments/assets/b6e7a6a0-c17e-4114-9ee2-8da08e6bad56" style="max-width: 100%; height: auto; max-height: 326px;; aspect-ratio: 1340 / 326; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p>用 9fps 播放（约 0.44 秒一个循环），效果大致是这样：</p>
+<p>![走路循环 GIF（4 帧循环）]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/59ea1e4f-c110-444d-b3e2-bad9dda7efd7"><img width="256" height="256" alt="15-walk-loop" src="https://github.com/user-attachments/assets/59ea1e4f-c110-444d-b3e2-bad9dda7efd7" style="max-width: 100%; height: auto; max-height: 256px;; aspect-ratio: 256 / 256; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<hr>
+<h2>七、拼成精灵图：规格与规范</h2>
+<h3>7.1 规格</h3>
+<p>WindowPet 的规则很简单：</p>
+<ul>
+<li>精灵图<strong>横向</strong>排列，帧号从 <strong>1</strong> 开始，从左往右；</li>
+<li>每帧是<strong>正方形</strong>，边长 = <code class="notranslate">frameSize</code>；</li>
+<li>整图宽 = <code class="notranslate">帧数 × frameSize</code>，高 = <code class="notranslate">frameSize</code>；</li>
+<li>必须是 <strong>RGBA（带透明通道）PNG</strong>。</li>
+</ul>
+<p>我这张是 <strong>1280×256 = 5 帧 × 256×256</strong>：</p>
+<p>![精灵图规格：1280×256，红线是每帧边界，帧号从左到右]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/70cb5050-1387-472e-8394-6eb06eb67025"><img width="1360" height="376" alt="05-sheet-spec" src="https://github.com/user-attachments/assets/70cb5050-1387-472e-8394-6eb06eb67025" style="max-width: 100%; height: auto; max-height: 376px;; aspect-ratio: 1360 / 376; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p>成品（透明背景）：</p>
+<p>![最终精灵图 1280×256]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/f1f0a195-1878-43e4-8748-85ea2604dbe0"><img width="1280" height="256" alt="08-angel-sheet" src="https://github.com/user-attachments/assets/f1f0a195-1878-43e4-8748-85ea2604dbe0" style="max-width: 100%; height: auto; max-height: 256px;; aspect-ratio: 1280 / 256; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<h3>7.2 一帧一个文件</h3>
+<p>做图阶段建议<strong>一帧存一个文件</strong>（<code class="notranslate">01.png</code>、<code class="notranslate">02.png</code>……），好处是：改某一帧只重跑那一张，重新拼图一句脚本就行。文件目录长这样：</p>
+<pre class="notranslate"><code class="notranslate">F:\WindowPet\天使形象制作\
+├─ frames\        ← 一帧一个文件：01.png 02.png 03.png 04.png 05.png
+├─ 成品\          ← 原图 / 透明立绘 / 精灵图 / 预览
+└─ 素材\          ← 抠图、局部重绘、拼帧的脚本
+</code></pre>
+<h3>7.3 拼图脚本的要点</h3>
+<p>写个几十行的 Python 就能把「帧文件夹 → 精灵图」自动化，几个必做的校验：</p>
+<ul>
+<li>每帧统一缩放/居中到 <code class="notranslate">frameSize</code> 正方形（不同尺寸的图不能直接拼）；</li>
+<li>检查每帧是否真的带 alpha，没有就报警（否则成品会有白底）；</li>
+<li>输出前断言 <code class="notranslate">宽 == 帧数 × 高</code>；</li>
+<li>顺便生成一份 JSON 配置（帧尺寸、图路径、每个动作的起止帧），桌宠程序直接读。</li>
+</ul>
+<p>这一步产出的两个文件，就是下一篇要装进 WindowPet 的东西：</p>
+<ul>
+<li><code class="notranslate">小天使_精灵图_1280x256.png</code></li>
+<li><code class="notranslate">angel_pet.json</code>（<code class="notranslate">frameSize: 256</code>、<code class="notranslate">walk: 1-4</code> 之类）</li>
+</ul>
+<hr>
+<h2>八、踩过的坑 &amp; 经验</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>现象</th>
+<th>原因</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>模型死活加载不了，ETA 几千秒</td>
+<td>CLIP tokenizer 要连 HuggingFace，被墙</td>
+<td><code class="notranslate">HF_ENDPOINT=https://hf-mirror.com</code></td>
+</tr>
+<tr>
+<td>成品边缘一圈白毛</td>
+<td>抠图时羽化边缘混进白底；或贴图用 RGB 而非 alpha</td>
+<td>白底去除公式 + alpha 合成</td>
+</tr>
+<tr>
+<td>几帧之间鞋子/腿型不一样</td>
+<td>每帧单独抽卡、seed 不同</td>
+<td>固定 seed；只重绘局部</td>
+</tr>
+<tr>
+<td>走路像"左右晃"</td>
+<td>只做了整图旋转/位移，脚没动</td>
+<td>重绘腿部 + 接触帧撇腿 + 身体起伏</td>
+</tr>
+<tr>
+<td>走路左右脚"反了"</td>
+<td>用镜像换脚，鞋子朝向被翻</td>
+<td>不镜像，用提示词分别生成左右脚在前的帧</td>
+</tr>
+<tr>
+<td>精灵图拼出来是歪的</td>
+<td>各帧尺寸不一致 / 没居中</td>
+<td>统一缩放居中到 frameSize</td>
+</tr>
+<tr>
+<td>桌宠显示区域不对</td>
+<td>系统缩放不是 100%（高 DPI）</td>
+<td>见下一篇的调试章节</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<hr>
+<h2>小结</h2>
+<p>这条流水线其实只有四个动作：<strong>生图（绘世/WebUI）→ 抠图（透明 PNG）→ 补帧（局部重绘 + 合成）→ 拼图（横排 + JSON）</strong>。</p>
+<p>难点不在工具，而在两个"一致性"：<strong>角色的形象要一致</strong>（固定 seed、只改局部），<strong>动作的节奏要参考真实样本</strong>（这次是拆了内置甘雨的 walk 来量幅度）。</p>
+<p>有了这张精灵图和 JSON，剩下的就是把它装进桌宠程序——下一篇：<br>
+<strong>《WindowPet 安装配置和自定义桌宠的完整流程》</strong>。</p>
+<h2><strong>这篇博客的所有图尤其是天使的图仅用作博客展示，请不要将我的天使图片用于自己的桌宠。这是对我的尊重，谢谢</strong></h2></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://HU-SHD.github.io/shihaodong.github.io">石浩东的个人博客</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","HU-SHD/shihaodong.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>
