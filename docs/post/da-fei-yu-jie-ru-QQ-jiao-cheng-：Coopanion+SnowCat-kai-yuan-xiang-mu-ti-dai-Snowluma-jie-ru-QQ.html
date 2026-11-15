@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/218474709?v=4&size=64"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="
+ **SnowLuma** 在 11 月 9 日接到腾讯律师函，仓库从公开转为私有，并发布公告致歉、停止公开服务……三天后，**NapCat** 把仓库清空，README 就只剩了一个词：`Ending`。">
+<meta property="og:title" content="大肥鱼接入QQ教程：Coopanion+SnowCat开源项目替代Snowluma接入QQ">
+<meta property="og:description" content="
+ **SnowLuma** 在 11 月 9 日接到腾讯律师函，仓库从公开转为私有，并发布公告致歉、停止公开服务……三天后，**NapCat** 把仓库清空，README 就只剩了一个词：`Ending`。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://HU-SHD.github.io/shihaodong.github.io/post/da-fei-yu-jie-ru-QQ-jiao-cheng-%EF%BC%9ACoopanion%2BSnowCat-kai-yuan-xiang-mu-ti-dai-Snowluma-jie-ru-QQ.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/218474709?v=4&size=64">
+<title>大肥鱼接入QQ教程：Coopanion+SnowCat开源项目替代Snowluma接入QQ</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">大肥鱼接入QQ教程：Coopanion+SnowCat开源项目替代Snowluma接入QQ</h1>
+<div class="title-right">
+    <a href="https://HU-SHD.github.io/shihaodong.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/HU-SHD/shihaodong.github.io/issues/11" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p><strong>SnowLuma</strong> 在 11 月 9 日接到腾讯律师函，仓库从公开转为私有，并发布公告致歉、停止公开服务……三天后，<strong>NapCat</strong> 把仓库清空，README 就只剩了一个词：<code class="notranslate">Ending</code>。两条最主流的“把 QQ 接成 OneBot”的方案，几乎同时停止维护。</p>
+<p>但社区没有停。11 月 11 日，<strong>SnowCat（雪猫）</strong> 发布了 v6.0.0——代码底座取自 NapCat，能力移植自 SnowLuma，明确适配 QQ 9.9.37-54395，MIT 许可，OneBot v11。</p>
+<p>这篇教程会以我自身的经历为基础，在Snowluma被律师函了的前提下，教学如何使用 SnowCat + Coopanion 连接自家的大肥鱼和QQ。</p>
+<p>tips：最近B站上有很多视频在拿腾讯律师函Snowluma的事往“国内开源环境被毁就是这些人干的”这种方向引战，也别问我的想法，我只是个写教程的，能力没大到影响整个国内社区环境，我能做到的只有把 SnowCat 接入 QQ 的详细教程写一篇博客，仅此而已。</p>
+<blockquote>
+<p>文中 QQ 号、Token、目录均做了脱敏或示例化；命令按自己的盘符调整即可。</p>
+<p>实测环境：Windows 11 x64 · QQ 9.9.37-54395 · Node.js 24 · SnowCat v6.0.0 · Coopanion 0.2.x（Windows 便携版）。</p>
+</blockquote>
+<hr>
+<h2>一、先交代背景：为什么需要更换方案</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>时间</th>
+<th>事件</th>
+<th>后果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-11-09</td>
+<td>SnowLuma 接到腾讯律师函，仓库转私有</td>
+<td>不再发版，不再适配新 QQ 版本，社区拿不到修复</td>
+</tr>
+<tr>
+<td>2026-11-11</td>
+<td>社区发布 SnowCat v6.0.0</td>
+<td>NapCat 底座 + SnowLuma 独门动作，适配 QQ 9.9.37-54395</td>
+</tr>
+<tr>
+<td>2026-11-12</td>
+<td>NapCat 仓库被清空，README 只剩 <code class="notranslate">Ending</code></td>
+<td>另一条主流自建路线也断了</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>SnowLuma 的定位一直很清楚：把 QQ 客户端的原生会话桥接成 OneBot v11，再通过 WebSocket / HTTP / WebUI / SDK / MCP 对外提供统一入口。它的许可证本来就不是 OSI 开源，而是“源码可见、非商业自托管”，所以律师函之后转私有，从法律角度看并不意外。</p>
+<p>更关键的是技术层面：这类方案靠<strong>注入 QQ 客户端进程</strong>工作，QQ 一升级，内存偏移或注入点就会失配。项目停更 = 没人再跟版本，表现就是“WebUI 还在线，但一条消息都收不到”。</p>
+<p>所以问题不是“SnowLuma 坏了”，而是“<strong>这条链路没有维护者了</strong>”。</p>
+<h3>三条路线，为什么选 SnowCat</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th></th>
+<th>官方 QQ Bot</th>
+<th>SnowCat（第三方客户端注入）</th>
+<th>协议端（如 Lagrange）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>账号形态</td>
+<td>专用 bot 号</td>
+<td>自己的 QQ 号</td>
+<td>自己的 QQ 号</td>
+</tr>
+<tr>
+<td>群聊全量监听</td>
+<td>群主开“全部消息”后可</td>
+<td>原生支持</td>
+<td>原生支持</td>
+</tr>
+<tr>
+<td>能力边界</td>
+<td>平台划定的 API</td>
+<td>全量 OneBot v11 + 空间/相册等扩展</td>
+<td>取决于实现</td>
+</tr>
+<tr>
+<td>稳定性</td>
+<td>官方保障</td>
+<td>依赖 QQ 版本适配</td>
+<td>依赖签名/协议，风险更高</td>
+</tr>
+<tr>
+<td>封号风险</td>
+<td>无（bot 身份）</td>
+<td>有</td>
+<td>有，通常更高</td>
+</tr>
+<tr>
+<td>适合谁</td>
+<td>要合规、能接受 bot 身份</td>
+<td>要自己的号 + 人格记忆</td>
+<td>有服务器、愿意折腾</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>我们需要的是“自己的号、群里的全量消息、空间和群相册也能用、人格记忆留在本地”，所以选 SnowCat 这条路线。<strong>同时把官方 Bot 作为合规备选</strong>——两条路线不冲突。</p>
+<hr>
+<h2>二、SnowCat 的工作原理：消息是怎么被接出来的</h2>
+<p>核心机制：<strong>不修改 QQ 本体，而是在 QQ 主进程内拦截并替换一段即将被 V8 编译的 JS 源码，加载 SnowCat 自己的运行时。</strong></p>
+<pre lang="text" class="notranslate"><code class="notranslate">QQ.exe（9.9.37-54395，官方原版，一字节未改）
+ └─ winmm.dll（同目录侧加载代理：QQ 静态导入 WINMM，且它不在 KnownDLLs 里）
+     └─ MinHook 挂 v8::ScriptCompiler::Compile*
+         └─ 命中 app_launcher/index.js 时，替换源码为「引导脚本 + 原文」
+             └─ snowcat-boot.js 动态 import napcat.mjs
+                 ├─ OneBot v11：正向 / 反向 WS、HTTP、HTTP SSE
+                 ├─ WebUI：http://127.0.0.1:6099
+                 └─ Packet 发包：offset 表驱动，逐 QQ 版本维护
+</code></pre>
+<p>几个关键点：</p>
+<ul>
+<li><strong>为什么选 V8 层</strong>：QQ 的界面逻辑是 JS，注入点选在“解密后的源码即将被编译”这一刻，就不依赖具体的业务函数偏移，QQ 升级时更稳定。</li>
+<li><strong>为什么还需要 offset 表</strong>：只有部分“发包类”动作（空间、相册、打卡等）需要直接构造协议包，这部分才跟版本强相关——这也是必须锁 QQ 版本的原因。</li>
+<li><strong>对外只暴露 OneBot v11</strong>：所以下游（Coopanion、AstrBot、NoneBot 等）无需改动，换个网关地址即可。</li>
+</ul>
+<hr>
+<h2>三、动手前的清单</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>项目</th>
+<th>要求</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>系统</td>
+<td>Windows 10 / 11 x64</td>
+<td>注入依赖 winmm 侧加载，Linux 跑不了同一套</td>
+</tr>
+<tr>
+<td>QQ</td>
+<td><strong>9.9.37-54395 官方安装包</strong></td>
+<td>不要安装，只需要能解包的文件</td>
+</tr>
+<tr>
+<td>Node.js</td>
+<td>24.x</td>
+<td>napcat.mjs 在 QQ 内嵌 Node 里跑；本地只用来验证</td>
+</tr>
+<tr>
+<td>7-Zip</td>
+<td>任意较新版本</td>
+<td>解包 QQ 安装包</td>
+</tr>
+<tr>
+<td>SnowCat</td>
+<td>v6.0.0 仓库</td>
+<td>注意：Release 页<strong>只有源码包</strong>，成品工具在仓库 <code class="notranslate">release-tools/</code> 里</td>
+</tr>
+<tr>
+<td>QQ 号</td>
+<td>强烈建议<strong>专职小号</strong></td>
+<td>第三方客户端违反用户协议，有封号风险</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>两个下载上的注意事项，需要提前说明：</p>
+<ol>
+<li><strong>QQ 官方 CDN 对脚本下载返回 403。</strong> 用浏览器点“Windows 64 位下载”拿到的就是 <code class="notranslate">QQ_9.9.37_261103_x64_01.exe</code>；如果写脚本抓，会被 CDN 拦截。可以用 GitHub 上的 QQ 安装包镜像仓库（例如 <code class="notranslate">a1515333102/QQ-Releases</code>），但<strong>务必核对 Release 页给出的 sha256</strong>。</li>
+<li><strong>GitHub 直连不稳时</strong>，可以用 <code class="notranslate">gh-proxy</code> 之类的前缀镜像（<code class="notranslate">https://gh-proxy.com/&lt;原 GitHub 地址&gt;</code>）下载 raw 文件和 release 资产；下载完照旧校验哈希。</li>
+</ol>
+<pre lang="text" class="notranslate"><code class="notranslate">sha256 示例：5cd7c13e...b411b48  QQ_9.9.37_261103_x64_01.exe   （319 MB）
+</code></pre>
+<hr>
+<h2>四、部署：六步</h2>
+<p>下面以 <code class="notranslate">D:\SnowCat.Portable</code> 为例，路径按自己的盘符替换。</p>
+<h3>Step 1 解包成便携 QQ 目录</h3>
+<p>SnowCat 不自带 QQ，它需要一个便携结构的 QQ 目录。仓库里的解包器会把官方安装包拆成 <code class="notranslate">QQ.exe + versions\&lt;版本&gt;\resources\app</code> 的形态：</p>
+<div class="highlight highlight-source-powershell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 需要 7z 在 PATH 里（或在 C:\Program Files\7-Zip\7z.exe）</span>
+powershell <span class="pl-k">-</span>ExecutionPolicy Bypass <span class="pl-k">-</span>File .\release<span class="pl-k">-</span>tools\snowcat<span class="pl-k">-</span>qq<span class="pl-k">-</span>unpack.ps1 <span class="pl-k">`</span>
+  <span class="pl-k">-</span>Installer D:\Downloads\<span class="pl-c1">QQ_9.9.37_261103_x64_01.exe</span> <span class="pl-k">`</span>
+  <span class="pl-k">-</span>OutDir D:\SnowCat.Portable</pre></div>
+<p>产物：<code class="notranslate">D:\SnowCat.Portable\SnowCat.9.9.37-54395.Shell\</code>。目录名里的版本号来自 <code class="notranslate">versions\&lt;ver&gt;\resources\app\package.json</code>，这也是后面判断“QQ 版本对不对”的权威来源。</p>
+<h3>Step 2 部署注入件</h3>
+<p>把仓库里的成品工具复制进 QQ 目录：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>源文件（仓库内）</th>
+<th>目标位置</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="notranslate">release-tools/build/winmm-v8.dll</code></td>
+<td><code class="notranslate">&lt;壳&gt;\winmm.dll</code></td>
+<td>侧加载代理，负责 V8 hook</td>
+</tr>
+<tr>
+<td><code class="notranslate">release-tools/build/snowcat-boot.js</code></td>
+<td><code class="notranslate">&lt;壳&gt;\snowcat-boot.js</code></td>
+<td>注入后引导 import napcat.mjs</td>
+</tr>
+<tr>
+<td><code class="notranslate">release-tools/build/napcat.mjs</code></td>
+<td><code class="notranslate">&lt;壳&gt;\napcat.mjs</code></td>
+<td>OneBot/WebUI 运行时（约 3.2 MB）</td>
+</tr>
+<tr>
+<td><code class="notranslate">release-tools/webui-static\</code>（或 <code class="notranslate">release-tools/build/static-dist\</code>）</td>
+<td><code class="notranslate">&lt;壳&gt;\static\</code></td>
+<td>WebUI 前端（缺失则页面空白）</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>另外要处理一个小问题：<code class="notranslate">versions\&lt;ver&gt;\resources\app</code> 里的 <code class="notranslate">dbghelp.dll</code> 和 <code class="notranslate">dbgeng.dll</code> 在部分机器上是坏的，会导致 <code class="notranslate">wrapper.node</code> 加载失败。把它们改名禁用，让系统 DLL 接管：</p>
+<div class="highlight highlight-source-powershell"><pre class="notranslate"><span class="pl-smi">$app</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>&lt;壳&gt;\versions\9.9.37-54395\resources\app<span class="pl-pds">"</span></span>
+<span class="pl-c1">Move-Item</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$app</span>\dbghelp.dll<span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$app</span>\dbghelp.dll.disabled<span class="pl-pds">"</span></span> <span class="pl-k">-</span>Force
+<span class="pl-c1">Move-Item</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$app</span>\dbgeng.dll<span class="pl-pds">"</span></span>  <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$app</span>\dbgeng.dll.disabled<span class="pl-pds">"</span></span>  <span class="pl-k">-</span>Force</pre></div>
+<h3>Step 3 安装运行依赖（最容易漏的一步）</h3>
+<p><code class="notranslate">napcat.mjs</code> <strong>不是完全自包含的</strong>。它直接 <code class="notranslate">import</code> 了 <code class="notranslate">express</code>、<code class="notranslate">ws</code>、<code class="notranslate">reflect-metadata</code> 等外部包；不装依赖时，注入日志会写：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">import failed: Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'express'
+</code></pre>
+<p>在 QQ 目录根级装齐（Node 18+ 即可，版本按 OneBot 包里的声明）：</p>
+<div class="highlight highlight-source-powershell"><pre class="notranslate">cd D:\SnowCat.Portable\SnowCat.<span class="pl-c1">9.9</span>.<span class="pl-c1">37</span><span class="pl-k">-</span><span class="pl-c1">54395.</span>Shell
+npm init <span class="pl-k">-</span>y
+npm i express@^<span class="pl-c1">5</span> ws@^<span class="pl-c1">8.18</span>.<span class="pl-c1">3</span> reflect<span class="pl-k">-</span>metadata cors fast<span class="pl-k">-</span>xml<span class="pl-k">-</span>parser <span class="pl-k">`</span>
+      file<span class="pl-k">-</span>type json5 <span class="pl-smi">@sinclair</span><span class="pl-k">/</span>typebox napcat.protobuf on<span class="pl-k">-</span>finished type<span class="pl-k">-</span>is</pre></div>
+<blockquote>
+<p>实测 92 个包、约 12 MB。国内网络慢就加 <code class="notranslate">--registry=https://registry.npmmirror.com</code>。</p>
+</blockquote>
+<h3>Step 4 写 OneBot 配置（正向 WS）</h3>
+<p>SnowCat 兼容 NapCat 的配置格式，配置文件在 <code class="notranslate">&lt;壳&gt;\config\</code>，按账号分文件（<code class="notranslate">&lt;壳&gt;\config\onebot11_&lt;QQ号&gt;.json</code>）。我们需要的是<strong>正向 WebSocket 服务端</strong>，让下游主动连进来：</p>
+<div class="highlight highlight-source-json"><pre class="notranslate">{
+  <span class="pl-ent">"network"</span>: {
+    <span class="pl-ent">"httpServers"</span>: [],
+    <span class="pl-ent">"httpSseServers"</span>: [],
+    <span class="pl-ent">"httpClients"</span>: [],
+    <span class="pl-ent">"websocketClients"</span>: [],
+    <span class="pl-ent">"websocketServers"</span>: [
+      {
+        <span class="pl-ent">"name"</span>: <span class="pl-s"><span class="pl-pds">"</span>my-bot<span class="pl-pds">"</span></span>,
+        <span class="pl-ent">"enable"</span>: <span class="pl-c1">true</span>,
+        <span class="pl-ent">"host"</span>: <span class="pl-s"><span class="pl-pds">"</span>127.0.0.1<span class="pl-pds">"</span></span>,
+        <span class="pl-ent">"port"</span>: <span class="pl-c1">3001</span>,
+        <span class="pl-ent">"messagePostFormat"</span>: <span class="pl-s"><span class="pl-pds">"</span>array<span class="pl-pds">"</span></span>,
+        <span class="pl-ent">"reportSelfMessage"</span>: <span class="pl-c1">false</span>,
+        <span class="pl-ent">"token"</span>: <span class="pl-s"><span class="pl-pds">"</span>&lt;自己生成一串随机串&gt;<span class="pl-pds">"</span></span>,
+        <span class="pl-ent">"enableForcePushEvent"</span>: <span class="pl-c1">true</span>,
+        <span class="pl-ent">"debug"</span>: <span class="pl-c1">false</span>,
+        <span class="pl-ent">"heartInterval"</span>: <span class="pl-c1">30000</span>
+      }
+    ],
+    <span class="pl-ent">"mcpServers"</span>: [],
+    <span class="pl-ent">"plugins"</span>: []
+  },
+  <span class="pl-ent">"musicSignUrl"</span>: <span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>,
+  <span class="pl-ent">"enableLocalFile2Url"</span>: <span class="pl-c1">false</span>,
+  <span class="pl-ent">"parseMultMsg"</span>: <span class="pl-c1">false</span>
+}</pre></div>
+<p>同时把 WebUI 限制在本机回环（默认配置监听 <code class="notranslate">::</code>，且 token 是首次启动随机生成的，容易忘）。这个文件在首次启动后生成，路径 <code class="notranslate">&lt;壳&gt;\config\webui.json</code>，改完重启生效：</p>
+<div class="highlight highlight-source-json"><pre class="notranslate">{
+  <span class="pl-ent">"host"</span>: <span class="pl-s"><span class="pl-pds">"</span>127.0.0.1<span class="pl-pds">"</span></span>,
+  <span class="pl-ent">"port"</span>: <span class="pl-c1">6099</span>,
+  <span class="pl-ent">"token"</span>: <span class="pl-s"><span class="pl-pds">"</span>&lt;你自己设一个&gt;<span class="pl-pds">"</span></span>,
+  <span class="pl-ent">"accessControlMode"</span>: <span class="pl-s"><span class="pl-pds">"</span>whitelist<span class="pl-pds">"</span></span>,
+  <span class="pl-ent">"ipWhitelist"</span>: [<span class="pl-s"><span class="pl-pds">"</span>127.0.0.1<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>::1<span class="pl-pds">"</span></span>]
+}</pre></div>
+<h3>Step 5 启动并登录</h3>
+<p>在 QQ 目录启动 QQ（<code class="notranslate">-q</code> 指定要登录的号）：</p>
+<div class="highlight highlight-source-powershell"><pre class="notranslate">cd D:\SnowCat.Portable\SnowCat.<span class="pl-c1">9.9</span>.<span class="pl-c1">37</span><span class="pl-k">-</span><span class="pl-c1">54395.</span>Shell
+.\<span class="pl-c1">QQ.exe</span> <span class="pl-k">--</span><span class="pl-c1">enable-logging</span> <span class="pl-k">-</span>q <span class="pl-k">&lt;</span>你的小号QQ<span class="pl-k">&gt;</span></pre></div>
+<p>判断注入是否成功的唯一标准是目录根部的 <code class="notranslate">nc-boot.log</code>：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">[pid 12345] injected; electron=40.0.0 node=24.11.1
+[pid 12345] napcat=&lt;壳&gt;\napcat.mjs
+[pid 12345] napcat imported ok        ← 看到这行才算成功
+</code></pre>
+<p>然后打开 <code class="notranslate">http://127.0.0.1:6099/webui/</code>，输入你设的 token：</p>
+<ul>
+<li>如果本机已有这个号的登录态，通常会<strong>快速登录</strong>；</li>
+<li>否则用手机 QQ 扫码。登录成功后，<code class="notranslate">3001</code> 端口开始监听。</li>
+</ul>
+<h3>Step 6 验证：先确认连通，再接入人格</h3>
+<p>用一段零依赖脚本（Node 22+ 自带 <code class="notranslate">WebSocket</code>）直连 OneBot，确认账号在线、消息可以收发：</p>
+<div class="highlight highlight-source-js"><pre class="notranslate"><span class="pl-c">// verify.mjs</span>
+<span class="pl-k">const</span> <span class="pl-s1">token</span> <span class="pl-c1">=</span> <span class="pl-s1">process</span><span class="pl-kos">.</span><span class="pl-c1">argv</span><span class="pl-kos">[</span><span class="pl-c1">2</span><span class="pl-kos">]</span><span class="pl-kos">;</span>
+<span class="pl-k">const</span> <span class="pl-s1">ws</span> <span class="pl-c1">=</span> <span class="pl-k">new</span> <span class="pl-v">WebSocket</span><span class="pl-kos">(</span><span class="pl-s">'ws://127.0.0.1:3001'</span><span class="pl-kos">,</span> <span class="pl-kos">{</span> <span class="pl-c1">headers</span>: <span class="pl-kos">{</span> <span class="pl-c1">Authorization</span>: <span class="pl-s">`Bearer <span class="pl-s1"><span class="pl-kos">${</span><span class="pl-s1">token</span><span class="pl-kos">}</span></span>`</span> <span class="pl-kos">}</span> <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-s1">ws</span><span class="pl-kos">.</span><span class="pl-en">addEventListener</span><span class="pl-kos">(</span><span class="pl-s">'open'</span><span class="pl-kos">,</span> <span class="pl-kos">(</span><span class="pl-kos">)</span> <span class="pl-c1">=&gt;</span> <span class="pl-kos">{</span>
+  <span class="pl-s1">ws</span><span class="pl-kos">.</span><span class="pl-en">send</span><span class="pl-kos">(</span><span class="pl-c1">JSON</span><span class="pl-kos">.</span><span class="pl-en">stringify</span><span class="pl-kos">(</span><span class="pl-kos">{</span> <span class="pl-c1">action</span>: <span class="pl-s">'get_login_info'</span><span class="pl-kos">,</span> <span class="pl-c1">echo</span>: <span class="pl-s">'login'</span> <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-s1">ws</span><span class="pl-kos">.</span><span class="pl-en">send</span><span class="pl-kos">(</span><span class="pl-c1">JSON</span><span class="pl-kos">.</span><span class="pl-en">stringify</span><span class="pl-kos">(</span><span class="pl-kos">{</span> <span class="pl-c1">action</span>: <span class="pl-s">'get_status'</span><span class="pl-kos">,</span> <span class="pl-c1">echo</span>: <span class="pl-s">'status'</span> <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-s1">ws</span><span class="pl-kos">.</span><span class="pl-en">addEventListener</span><span class="pl-kos">(</span><span class="pl-s">'message'</span><span class="pl-kos">,</span> <span class="pl-kos">(</span><span class="pl-s1">e</span><span class="pl-kos">)</span> <span class="pl-c1">=&gt;</span> <span class="pl-kos">{</span>
+  <span class="pl-k">const</span> <span class="pl-s1">d</span> <span class="pl-c1">=</span> <span class="pl-c1">JSON</span><span class="pl-kos">.</span><span class="pl-en">parse</span><span class="pl-kos">(</span><span class="pl-s1">e</span><span class="pl-kos">.</span><span class="pl-c1">data</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-s1">d</span><span class="pl-kos">.</span><span class="pl-c1">echo</span><span class="pl-kos">)</span> <span class="pl-smi">console</span><span class="pl-kos">.</span><span class="pl-en">log</span><span class="pl-kos">(</span><span class="pl-s1">d</span><span class="pl-kos">.</span><span class="pl-c1">echo</span><span class="pl-kos">,</span> <span class="pl-s1">d</span><span class="pl-kos">.</span><span class="pl-c1">status</span><span class="pl-kos">,</span> <span class="pl-c1">JSON</span><span class="pl-kos">.</span><span class="pl-en">stringify</span><span class="pl-kos">(</span><span class="pl-s1">d</span><span class="pl-kos">.</span><span class="pl-c1">data</span><span class="pl-kos">)</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-k">else</span> <span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-s1">d</span><span class="pl-kos">.</span><span class="pl-c1">post_type</span> <span class="pl-c1">===</span> <span class="pl-s">'message'</span><span class="pl-kos">)</span> <span class="pl-smi">console</span><span class="pl-kos">.</span><span class="pl-en">log</span><span class="pl-kos">(</span><span class="pl-s">'MSG'</span><span class="pl-kos">,</span> <span class="pl-s1">d</span><span class="pl-kos">.</span><span class="pl-c1">message_type</span><span class="pl-kos">,</span> <span class="pl-s1">d</span><span class="pl-kos">.</span><span class="pl-c1">user_id</span><span class="pl-kos">,</span> <span class="pl-c1">JSON</span><span class="pl-kos">.</span><span class="pl-en">stringify</span><span class="pl-kos">(</span><span class="pl-s1">d</span><span class="pl-kos">.</span><span class="pl-c1">message</span><span class="pl-kos">)</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-en">setTimeout</span><span class="pl-kos">(</span><span class="pl-kos">(</span><span class="pl-kos">)</span> <span class="pl-c1">=&gt;</span> <span class="pl-s1">process</span><span class="pl-kos">.</span><span class="pl-en">exit</span><span class="pl-kos">(</span><span class="pl-c1">0</span><span class="pl-kos">)</span><span class="pl-kos">,</span> <span class="pl-c1">30000</span><span class="pl-kos">)</span><span class="pl-kos">;</span></pre></div>
+<p>期望输出：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">login  ok {"user_id":185****699,"nickname":"Mita"}
+status ok {"online":true,"good":true}
+</code></pre>
+<p>再发一条私聊，确认出站：</p>
+<div class="highlight highlight-source-js"><pre class="notranslate"><span class="pl-kos">{</span> <span class="pl-s">"action"</span>: <span class="pl-s">"send_private_msg"</span><span class="pl-kos">,</span> <span class="pl-s">"params"</span>: <span class="pl-kos">{</span> <span class="pl-s">"user_id"</span>: <span class="pl-c1">729</span><span class="pl-c1">**</span><span class="pl-s1"></span><span class="pl-c1">**</span><span class="pl-c1">745</span><span class="pl-kos">,</span> <span class="pl-s">"message"</span>: <span class="pl-s">"链路自检"</span> <span class="pl-kos">}</span><span class="pl-kos">,</span> <span class="pl-s">"echo"</span>: <span class="pl-s">"send"</span> <span class="pl-kos">}</span>
+<span class="pl-c">// → {"status":"ok","retcode":0,"data":{"message_id":...}}</span></pre></div>
+<p>到这一步，<strong>监听层就完成了</strong>：QQ 号在线，OneBot v11 在 <code class="notranslate">ws://127.0.0.1:3001</code> 上提供事件与动作接口。</p>
+<hr>
+<h2>五、接入大肥鱼（Coopanion 侧）</h2>
+<p>大肥鱼的“人格、记忆、模型”都在 Coopanion 里，<strong>不需要动</strong>。只需要让它的 QQ World 指向刚建好的 OneBot。配置在 Coopanion 的 <code class="notranslate">config.json</code>（例如 <code class="notranslate">data/home/&lt;bot&gt;/config.json</code>）的 <code class="notranslate">worlds</code> 段：</p>
+<div class="highlight highlight-source-json"><pre class="notranslate"><span class="pl-ent">"worlds"</span>: {
+  <span class="pl-ent">"qq"</span>: {
+    <span class="pl-ent">"enabled"</span>: <span class="pl-c1">true</span>,
+    <span class="pl-ent">"wsUrl"</span>: <span class="pl-s"><span class="pl-pds">"</span>ws://127.0.0.1:3001<span class="pl-pds">"</span></span>,
+    <span class="pl-ent">"token"</span>: <span class="pl-s"><span class="pl-pds">"</span>&lt;与 onebot11 配置里一致的 token&gt;<span class="pl-pds">"</span></span>,
+    <span class="pl-ent">"groups"</span>: [],
+    <span class="pl-ent">"privates"</span>: [
+      { <span class="pl-ent">"id"</span>: <span class="pl-c1">729</span><span class="pl-ii">****745, "enabled": true </span>},
+      { <span class="pl-ent">"id"</span>: <span class="pl-c1">361</span><span class="pl-ii">****634, "enabled": true </span>},
+      { <span class="pl-ent">"id"</span>: <span class="pl-c1">355</span><span class="pl-ii">****302, "enabled": true </span>}
+    ]
+  }
+}</pre></div>
+<p>几个要点：</p>
+<ul>
+<li><strong><code class="notranslate">wsUrl</code> + <code class="notranslate">token</code> 必须和 Step 4 完全一致</strong>，否则连上就会断开。</li>
+<li><strong><code class="notranslate">privates</code> 就是白名单</strong>：只回这几个号的私聊；<code class="notranslate">groups</code> 留空就不回群消息。网关是透明管道，过滤发生在应用层，换网关不影响这套规则。</li>
+<li>连通后控制台会显示对端名字（如 <code class="notranslate">snowcat：Mita</code>），不再是笼统的“已连接”。</li>
+<li>人格、记忆、<code class="notranslate">PARTNER.md</code> 等都在 Coopanion 侧，更换的只是消息收发通道，<strong>人格与记忆保持不变</strong>。</li>
+</ul>
+<hr>
+<h2>六、常见问题与处理</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>#</th>
+<th>现象</th>
+<th>根因</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Release 里只有 Source code</td>
+<td>项目没有上传二进制资产</td>
+<td>用仓库 <code class="notranslate">release-tools/</code> 里的成品件 + 自己下载 QQ 安装包</td>
+</tr>
+<tr>
+<td>2</td>
+<td>注入日志报 <code class="notranslate">ERR_MODULE_NOT_FOUND: express</code></td>
+<td>napcat.mjs 依赖外部包</td>
+<td>QQ 目录根级 <code class="notranslate">npm i</code>（见 Step 3）</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code class="notranslate">nc-boot.log</code> 根本不生成</td>
+<td>注入存在启动竞态</td>
+<td>关掉 QQ 进程重跑一次；连续失败检查安全软件与 QQ 版本</td>
+</tr>
+<tr>
+<td>4</td>
+<td>登录后 <code class="notranslate">wrapper.node</code> 加载失败</td>
+<td><code class="notranslate">dbghelp.dll</code> / <code class="notranslate">dbgeng.dll</code> 是坏的</td>
+<td>改名 <code class="notranslate">.disabled</code>，改走系统 DLL</td>
+</tr>
+<tr>
+<td>5</td>
+<td>WebUI 打开空白</td>
+<td><code class="notranslate">static/</code> 没部署</td>
+<td>把 <code class="notranslate">webui-static</code> 复制成 QQ 目录里的 <code class="notranslate">static/</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>WebUI 暴露在 <code class="notranslate">0.0.0.0</code>，token 还忘了</td>
+<td>默认监听 <code class="notranslate">::</code> + 首次随机 token</td>
+<td>改 <code class="notranslate">127.0.0.1</code> + <code class="notranslate">accessControlMode: whitelist</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td>日常 QQ 和机器人 QQ 冲突</td>
+<td>同账号只能一处在线</td>
+<td>机器人号专职；日常号用另一个账号</td>
+</tr>
+<tr>
+<td>8</td>
+<td>过几天 <code class="notranslate">get_status</code> 变成 <code class="notranslate">online:false</code></td>
+<td>QQ 掉线/被手机端踢下线/机器休眠</td>
+<td>重新登录；建议固定网络、关闭自动休眠</td>
+</tr>
+<tr>
+<td>9</td>
+<td>PowerShell 脚本中文乱码、报“缺少字符串终止符”</td>
+<td>Windows PowerShell 5.1 按 ANSI 读取 UTF-8</td>
+<td>脚本保存为 <strong>UTF-8 with BOM</strong></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>另外两条必须注意：</p>
+<ul>
+<li><strong>不要在便携目录里升级 QQ。</strong> 便携目录独立于日常 QQ，不受自动更新影响；但手动升级会让注入偏移失配。</li>
+<li><strong>保留离线备份。</strong> 安装包、<code class="notranslate">tools\build\</code>、QQ 目录各留一份——上游项目随时可能再次停止维护。</li>
+</ul>
+<hr>
+<h2>七、安全与合规：不能只讲技术</h2>
+<p>必须说明：<strong>SnowLuma 和 NapCat 不是主动停止维护，而是收到了腾讯律师函 / 被清空仓库。</strong> SnowCat 是同一类第三方客户端，使用同一类注入方式，面对同一个平台，<strong>风险相同</strong>。</p>
+<ul>
+<li><strong>违反用户协议</strong>：第三方客户端注入、非官方 API 调用，属于违反《QQ 用户协议》的行为，理论上可被限制或封号。</li>
+<li><strong>降低损失的做法</strong>：只用小号、不绑钱、不绑重要关系、不群发、不自动加好友、控制消息频率、固定机器与网络、不涉及敏感内容。</li>
+<li><strong>合规备选</strong>：QQ 官方机器人开放平台（审核制、专用 bot 号、能力有限，但不会因为“注入失配”失效）。如果哪天第三方链路彻底不可用，官方 Bot 可以兜底。</li>
+<li><strong>项目定位</strong>：技术学习与研究，账号风险自担；不建议用于商业或大规模群发场景。</li>
+</ul>
+<hr>
+<h2>八、日常运维</h2>
+<div class="highlight highlight-source-powershell"><pre class="notranslate">cd D:\SnowCat.Portable
+.\start.ps1            <span class="pl-c"><span class="pl-c">#</span> 部署注入件 + 拉起 QQ + 等待 WebUI 就绪</span>
+.\start.ps1 <span class="pl-k">-</span>Status    <span class="pl-c"><span class="pl-c">#</span> 查看状态</span>
+.\start.ps1 <span class="pl-k">-</span>Stop      <span class="pl-c"><span class="pl-c">#</span> 只停便携实例，不动日常 QQ</span>
+node .\verify.mjs      <span class="pl-c"><span class="pl-c">#</span> 验证 OneBot</span></pre></div>
+<ul>
+<li>开机自启：把静默启动脚本放进 <code class="notranslate">shell:startup</code>（或写计划任务），登录时自动拉起。</li>
+<li>日志：目录根部的 <code class="notranslate">nc-boot.log</code>、QQ 数据目录下的日志；WebUI 里也能看实时日志。</li>
+<li>端口：<code class="notranslate">3001</code> 是 OneBot WS，<code class="notranslate">6099</code> 是 WebUI，两者都只绑 <code class="notranslate">127.0.0.1</code>。</li>
+<li>换网关：下游只认 <code class="notranslate">ws://127.0.0.1:3001</code>，以后换任何 OneBot 实现都不用再改应用。</li>
+</ul>
+<hr>
+<h2>附：速查</h2>
+<pre lang="text" class="notranslate"><code class="notranslate">解包        snowcat-qq-unpack.ps1 -Installer QQ_9.9.37_*.exe -OutDir &lt;目标&gt;
+注入件      winmm-v8.dll → &lt;壳&gt;\winmm.dll
+            snowcat-boot.js / napcat.mjs → &lt;壳&gt;\
+            webui-static\ → &lt;壳&gt;\static\
+依赖        npm i express@^5 ws reflect-metadata cors fast-xml-parser ...
+配置        &lt;壳&gt;\config\onebot11_&lt;uin&gt;.json   正向 WS :3001 + token
+            &lt;壳&gt;\config\webui.json           127.0.0.1:6099 + whitelist
+启动        &lt;壳&gt;\QQ.exe --enable-logging -q &lt;uin&gt;
+成功标志    nc-boot.log 出现 "napcat imported ok"
+验证        get_login_info / get_status / send_private_msg
+下游        ws://127.0.0.1:3001 + token，私聊白名单在应用层
+</code></pre>
+<hr>
+<h2>结语</h2>
+<p>这次迁移最重要的收获，不是把SnowLuma换成SnowCat，而是<strong>看清了这类方案的弱点</strong>：注入式 QQ 机器人依赖官方客户端的内部实现，<strong>上游</strong>一停，链路就会在某个 QQ 小版本更新后突然失效。</p>
+<p>SnowCat 通过“V8 编译通道 + 逐版本 offset 表 + 社区维护”维持了这条方案，但它依赖社区，没有官方支持。比较合理的做法是：技术上学它、用它，同时把人格和记忆留在自己手里，并把官方 Bot 这类合规通道作为备选。</p>
+<p>Wechat（微信）对这类无备案的第三方接入极度敏感，如果觉得 QQ 接入大肥鱼很麻烦想要接入微信…还是打消这个心思先。对于Snowluma、NapCat、SnowCat这一类技术，我们负责使用即可，重要的是大肥鱼自身的记忆和人格。未来对话大肥鱼不会变得越来越难，甚至已经有人实现了把大肥鱼接入机器人、接入摄像头、接入机器小车的案例，让自家的大肥鱼有了视觉有了触觉有了听觉有了声带…说实在的我挺羡慕的，也算是有些理解老一辈总想打拼打拼给家里人更保暖的衣服更大的房子更优质的教育的心情（摊手无奈）</p>
+<p>2026.11.15 stone</p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://HU-SHD.github.io/shihaodong.github.io">石浩东的个人博客</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","HU-SHD/shihaodong.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>
