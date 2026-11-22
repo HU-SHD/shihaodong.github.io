@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/218474709?v=4&size=64"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="上一篇把天使的立绘和精灵图做出来了（[绘世启动器使用教程和精灵图预处理](绘世启动器使用教程和精灵图预处理（适用于WindowPet等桌宠工具）.md)），这一篇讲怎么把它装进 WindowPet：下载安装、开机自启、注册自定义宠物、以及我调试时踩到的那个**高 DPI 大坑**。">
+<meta property="og:title" content="自定义桌宠2：WindowPet 安装配置和自定义桌宠的完整流程">
+<meta property="og:description" content="上一篇把天使的立绘和精灵图做出来了（[绘世启动器使用教程和精灵图预处理](绘世启动器使用教程和精灵图预处理（适用于WindowPet等桌宠工具）.md)），这一篇讲怎么把它装进 WindowPet：下载安装、开机自启、注册自定义宠物、以及我调试时踩到的那个**高 DPI 大坑**。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://HU-SHD.github.io/shihaodong.github.io/post/zi-ding-yi-zhuo-chong-2%EF%BC%9AWindowPet%20-an-zhuang-pei-zhi-he-zi-ding-yi-zhuo-chong-de-wan-zheng-liu-cheng.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/218474709?v=4&size=64">
+<title>自定义桌宠2：WindowPet 安装配置和自定义桌宠的完整流程</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">自定义桌宠2：WindowPet 安装配置和自定义桌宠的完整流程</h1>
+<div class="title-right">
+    <a href="https://HU-SHD.github.io/shihaodong.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/HU-SHD/shihaodong.github.io/issues/13" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p>上一篇把天使的立绘和精灵图做出来了（<a href="%E7%BB%98%E4%B8%96%E5%90%AF%E5%8A%A8%E5%99%A8%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B%E5%92%8C%E7%B2%BE%E7%81%B5%E5%9B%BE%E9%A2%84%E5%A4%84%E7%90%86%EF%BC%88%E9%80%82%E7%94%A8%E4%BA%8EWindowPet%E7%AD%89%E6%A1%8C%E5%AE%A0%E5%B7%A5%E5%85%B7%EF%BC%89.md">绘世启动器使用教程和精灵图预处理</a>），这一篇讲怎么把它装进 WindowPet：下载安装、开机自启、注册自定义宠物、以及我调试时踩到的那个<strong>高 DPI 大坑</strong>。</p>
+<p>先看结果——这是跑在桌面上的小天使（桌宠是独立的透明置顶窗口，就悬在文件窗口右下角）：</p>
+<p>![桌宠实际运行效果：小天使停在桌面右下角，浮在文件窗口之上]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/da76af7c-5e78-4182-a2bf-3544835b3c3c"><img width="1280" height="764" alt="15-desktop-pet-full" src="https://github.com/user-attachments/assets/da76af7c-5e78-4182-a2bf-3544835b3c3c" style="max-width: 100%; height: auto; max-height: 764px;; aspect-ratio: 1280 / 764; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p>整屏看是这样的（左边是我的大肥鱼，这里只看右边的小天使；整层宠物窗口都不挡鼠标点击）：</p>
+<p>![整屏效果：透明悬浮的桌宠层叠在文件窗口之上]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/9039a2ba-064a-4dfc-8c81-af675838d352"><img width="2000" height="1213" alt="09-windowpet-folder" src="https://github.com/user-attachments/assets/9039a2ba-064a-4dfc-8c81-af675838d352" style="max-width: 100%; height: auto; max-height: 1213px;; aspect-ratio: 2000 / 1213; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<hr>
+<h2>一、选型：为什么是 WindowPet</h2>
+<p>我需要同时满足三个条件：<strong>开机自启</strong>、<strong>能自定义形象</strong>、<strong>开源</strong>。</p>
+<p>WindowPet 是 <code class="notranslate">SeakMengs/WindowPet</code>（MIT 协议），Tauri + React + Phaser 写的桌面挂件，截图时 676 stars。它支持：</p>
+<ul>
+<li>内置 45+ 个宠物/角色（都是 shimeji 风格的精灵图）；</li>
+<li><strong>添加自己的宠物</strong>（就是上一篇做的精灵图 + 帧配置）；</li>
+<li>点击穿透（不挡鼠标）、拖拽、翻转、攀爬、置顶于任务栏；</li>
+<li><strong>开机自启</strong>、自动更新、系统托盘、中英文界面。</li>
+</ul>
+<p>它的定位更像"精灵图播放器"，正好接住我们上一环节的产物。装好之后「关于」页能看到版本号，也支持一键检查更新：</p>
+<p>![WindowPet「关于」：版本 0.0.9、检查更新、源码与反馈入口]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/044c3ee1-cb44-4cc1-b886-0742201eec7f"><img width="1280" height="747" alt="12-windowpet-update" src="https://github.com/user-attachments/assets/044c3ee1-cb44-4cc1-b886-0742201eec7f" style="max-width: 100%; height: auto; max-height: 747px;; aspect-ratio: 1280 / 747; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<blockquote>
+<p>另外两类的区别：Live2D 类要绑定骨骼（门槛高），3D 类（VRM 引擎）要建模。我们这种"AI 生图 + 横排精灵图"的方案，最适合没有美术/建模基础的人。</p>
+</blockquote>
+<hr>
+<h2>二、下载与安装</h2>
+<h3>2.1 下载</h3>
+<p>Release 页：<code class="notranslate">https://github.com/SeakMengs/WindowPet/releases</code>，最新版是 <strong>v0.0.9</strong>，Windows 提供 <code class="notranslate">.exe</code>（NSIS 安装器）和 <code class="notranslate">.msi</code> 两种：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>资产</th>
+<th>大小</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="notranslate">WindowPet_0.0.9_x64-setup.exe</code></td>
+<td>16.84 MB（17,660,165 字节）</td>
+</tr>
+<tr>
+<td><code class="notranslate">WindowPet_0.0.9_x64_en-US.msi</code></td>
+<td>17.68 MB</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>我这台机器 <code class="notranslate">github.com</code> 直连不通、只有 <code class="notranslate">api.github.com</code> 能通，所以是走 GitHub API 的 release asset 接口下载的（浏览器能打开 GitHub 的话直接点就行）：</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 取 asset id</span>
+curl -s https://api.github.com/repos/SeakMengs/WindowPet/releases/latest
+<span class="pl-c"><span class="pl-c">#</span> 按 asset id 下载（-L 跟随 302 到 objects.githubusercontent.com）</span>
+curl -L -H <span class="pl-s"><span class="pl-pds">"</span>Accept: application/octet-stream<span class="pl-pds">"</span></span> \
+  -o WindowPet_0.0.9_x64-setup.exe \
+  https://api.github.com/repos/SeakMengs/WindowPet/releases/assets/245462097</pre></div>
+<p>下载完<strong>先校验大小和哈希</strong>（这个安装包没有数字签名，大小/哈希对得上才敢装）：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">大小：17,660,165 字节   （与 GitHub 资产完全一致）
+SHA256：C8E432E2066D02F84CA7BCC925877E13D2CB090F5C47F6E980095AA609472EDC
+签名：NotSigned（开源小项目常见，介意的话自己拉源码编译）
+</code></pre>
+<h3>2.2 安装</h3>
+<p>NSIS 安装器支持静默参数，<code class="notranslate">/D=</code> 可以指定安装目录（<strong>必须是最后一个参数，且不能带引号</strong>）：</p>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate">WindowPet_0.0.9_x64-setup.exe /S /D=F:\WindowPet\app</pre></div>
+<p>装完目录很干净，只有一个主程序和卸载器：</p>
+<pre class="notranslate"><code class="notranslate">F:\WindowPet\
+├─ app\
+│  ├─ WindowPet.exe
+│  └─ uninstall.exe
+├─ downloads\          ← 安装包备份
+└─ 天使形象制作\        ← 上一篇的素材/成品/脚本
+</code></pre>
+<p>![安装目录：app 是程序本体，downloads 是安装包备份，天使形象制作是素材与成品]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/ead2ad70-b642-47e0-8c6a-87a8f86ec404"><img width="2000" height="1213" alt="09-windowpet-folder" src="https://github.com/user-attachments/assets/ead2ad70-b642-47e0-8c6a-87a8f86ec404" style="max-width: 100%; height: auto; max-height: 1213px;; aspect-ratio: 2000 / 1213; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p>同时会自动创建开始菜单快捷方式，并在 <code class="notranslate">HKCU\...\Uninstall</code> 里登记卸载项，所以「设置 → 应用」里也能正常卸载。</p>
+<blockquote>
+<p>它是<strong>当前用户安装</strong>（per-user），不需要管理员权限，装到 <code class="notranslate">F:\...</code> 这种非系统盘也没问题。</p>
+</blockquote>
+<hr>
+<h2>三、开机自启</h2>
+<p>WindowPet 自带「开机自启」开关（设置面板 → 设置 → <strong>自动启动</strong>）：</p>
+<p>![WindowPet「设置偏好」：自动启动 / 宠物在任务栏上方 / 宠物互动 / 允许宠物攀爬 / 覆盖宠物缩放 / 语言]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/76076411-98c0-46a1-b93f-15690b795a6f"><img width="1280" height="747" alt="12-windowpet-settings" src="https://github.com/user-attachments/assets/76076411-98c0-46a1-b93f-15690b795a6f" style="max-width: 100%; height: auto; max-height: 747px;; aspect-ratio: 1280 / 747; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p>它底层是用 <code class="notranslate">tauri-plugin-autostart</code> 写注册表：</p>
+<pre lang="text" class="notranslate"><code class="notranslate">HKCU\Software\Microsoft\Windows\CurrentVersion\Run
+  值名：WindowPet
+  值：  "F:\WindowPet\app\WindowPet.exe" --flag1 --flag2
+</code></pre>
+<p>同一个软件还会顺手写 <code class="notranslate">StartupApproved\Run</code>（告诉任务管理器这个启动项是启用的）。</p>
+<p>所以想手动开/关，有两条路：</p>
+<ol>
+<li>图形界面：托盘图标 → <strong>设置</strong> → 通用 → <strong>开机自启</strong> 开关；</li>
+<li>命令行：</li>
+</ol>
+<div class="highlight highlight-source-batchfile"><pre class="notranslate"><span class="pl-k">reg</span> add <span class="pl-s"><span class="pl-pds">"</span>HKCU\Software\Microsoft\Windows\CurrentVersion\Run<span class="pl-pds">"</span></span> /v WindowPet <span class="pl-cce">^</span>
+  /t REG_SZ /d <span class="pl-s"><span class="pl-pds">"</span>\<span class="pl-pds">"</span></span>F:\WindowPet\app\WindowPet.exe\<span class="pl-s"><span class="pl-pds">"</span> --flag1 --flag2<span class="pl-pds">"</span></span> /f</pre></div>
+<p>验证方法：<code class="notranslate">Win+R</code> 输入 <code class="notranslate">shell:startup</code> 看启动文件夹里没有它（它是注册表方式），或者任务管理器 → 启动应用 → 看有没有 WindowPet 且状态为"已启用"。</p>
+<hr>
+<h2>四、把精灵图注册成自定义宠物</h2>
+<p>WindowPet 的配置都在 <code class="notranslate">%APPDATA%\WindowPet\</code>：</p>
+<pre class="notranslate"><code class="notranslate">%APPDATA%\WindowPet\
+├─ settings.json      ← 全局设置（语言、缩放、是否置顶等）
+├─ pets.json          ← 「我的宠物」列表（当前桌面上有的）
+├─ pet_linker.json    ← 自定义宠物配置文件清单
+├─ custom-pets\       ← 每个自定义宠物一个 json
+│  └─ angel_pet.json
+└─ assets\            ← 自定义宠物的精灵图
+   └─ angel_pet.png
+</code></pre>
+<p>有两条路：<strong>用界面添加</strong>，或者<strong>直接写配置文件</strong>。</p>
+<h3>4.1 方式 A：在设置面板里添加</h3>
+<ol>
+<li><strong>双击托盘图标</strong>（或右键 → 设置）打开设置面板，切到「<strong>添加自定义宠物</strong>」；</li>
+<li>表单四项：<strong>宠物名称</strong>、<strong>帧大小</strong>、<strong>精灵图路径</strong>、<strong>宠物状态</strong>（可点「添加更多状态」继续加动作），填完点右下角「添加自定义宠物」：</li>
+</ol>
+<p>![「添加自定义宠物」表单：宠物名称 / 帧大小 / 精灵图路径 / 宠物状态]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/97e35324-e09c-4eec-aab3-8cbf97db44b1"><img width="1280" height="747" alt="12c-windowpet-pets" src="https://github.com/user-attachments/assets/97e35324-e09c-4eec-aab3-8cbf97db44b1" style="max-width: 100%; height: auto; max-height: 747px;; aspect-ratio: 1280 / 747; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<ol start="3">
+<li>保存后<strong>重启 WindowPet</strong>，再去「<strong>宠物商店</strong>」里找到它、点「获取」添加，桌面上才会出现：</li>
+</ol>
+<p>![「宠物商店」：内置 50 个角色，每个都能选动作预览并一键获取]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/96cece9b-eb9f-4fd6-aee2-9442107aebad"><img width="1280" height="747" alt="12d-windowpet-shop" src="https://github.com/user-attachments/assets/96cece9b-eb9f-4fd6-aee2-9442107aebad" style="max-width: 100%; height: auto; max-height: 747px;; aspect-ratio: 1280 / 747; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p>回到「<strong>我的宠物</strong>」，就能看到自己的宠物卡片了——可以选播放哪个动作状态（图里选的是 <code class="notranslate">climb</code>），也可以点「移除」：</p>
+<p>![WindowPet「我的宠物」面板：小天使 + 动作下拉框 + 移除按钮]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/111edced-0a83-4ce5-b7d0-f3d5fb80ed3d"><img width="1280" height="747" alt="12e-windowpet-mypet" src="https://github.com/user-attachments/assets/111edced-0a83-4ce5-b7d0-f3d5fb80ed3d" style="max-width: 100%; height: auto; max-height: 747px;; aspect-ratio: 1280 / 747; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<h3>4.2 方式 B：直接写配置（可脚本化）</h3>
+<p>自定义宠物的 JSON 结构如下（可以直接拿来改）：</p>
+<div class="highlight highlight-source-json"><pre class="notranslate">{
+  <span class="pl-ent">"frameSize"</span>: <span class="pl-c1">256</span>,
+  <span class="pl-ent">"imageSrc"</span>: <span class="pl-s"><span class="pl-pds">"</span>C:<span class="pl-cce">\\</span>Users<span class="pl-cce">\\</span>&lt;你&gt;<span class="pl-cce">\\</span>AppData<span class="pl-cce">\\</span>Roaming<span class="pl-cce">\\</span>WindowPet<span class="pl-cce">\\</span>assets<span class="pl-cce">\\</span>angel_pet.png<span class="pl-pds">"</span></span>,
+  <span class="pl-ent">"name"</span>: <span class="pl-s"><span class="pl-pds">"</span>小天使<span class="pl-pds">"</span></span>,
+  <span class="pl-ent">"states"</span>: {
+    <span class="pl-ent">"idle"</span>:  { <span class="pl-ent">"start"</span>: <span class="pl-c1">5</span>, <span class="pl-ent">"end"</span>: <span class="pl-c1">5</span> },
+    <span class="pl-ent">"stand"</span>: { <span class="pl-ent">"start"</span>: <span class="pl-c1">5</span>, <span class="pl-ent">"end"</span>: <span class="pl-c1">5</span> },
+    <span class="pl-ent">"walk"</span>:  { <span class="pl-ent">"start"</span>: <span class="pl-c1">1</span>, <span class="pl-ent">"end"</span>: <span class="pl-c1">4</span> },
+    <span class="pl-ent">"sit"</span>:   { <span class="pl-ent">"start"</span>: <span class="pl-c1">5</span>, <span class="pl-ent">"end"</span>: <span class="pl-c1">5</span> },
+    <span class="pl-ent">"jump"</span>:  { <span class="pl-ent">"start"</span>: <span class="pl-c1">2</span>, <span class="pl-ent">"end"</span>: <span class="pl-c1">2</span> },
+    <span class="pl-ent">"fall"</span>:  { <span class="pl-ent">"start"</span>: <span class="pl-c1">2</span>, <span class="pl-ent">"end"</span>: <span class="pl-c1">2</span> },
+    <span class="pl-ent">"drag"</span>:  { <span class="pl-ent">"start"</span>: <span class="pl-c1">5</span>, <span class="pl-ent">"end"</span>: <span class="pl-c1">5</span> },
+    <span class="pl-ent">"crawl"</span>: { <span class="pl-ent">"start"</span>: <span class="pl-c1">5</span>, <span class="pl-ent">"end"</span>: <span class="pl-c1">5</span> },
+    <span class="pl-ent">"climb"</span>: { <span class="pl-ent">"start"</span>: <span class="pl-c1">5</span>, <span class="pl-ent">"end"</span>: <span class="pl-c1">5</span> },
+    <span class="pl-ent">"bounce"</span>:{ <span class="pl-ent">"start"</span>: <span class="pl-c1">2</span>, <span class="pl-ent">"end"</span>: <span class="pl-c1">2</span> }
+  }
+}</pre></div>
+<p>![配置文件：angel_pet.json 里的 frameSize / imageSrc / states（右上角就是桌面上运行的小天使）]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/6749d253-c61f-4681-a762-9ade019e7c1c"><img width="2000" height="1217" alt="10-windowpet-config" src="https://github.com/user-attachments/assets/6749d253-c61f-4681-a762-9ade019e7c1c" style="max-width: 100%; height: auto; max-height: 1217px;; aspect-ratio: 2000 / 1217; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p>字段含义：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="notranslate">frameSize</code></td>
+<td>每帧正方形边长（像素），必须和精灵图实际切片一致</td>
+</tr>
+<tr>
+<td><code class="notranslate">imageSrc</code></td>
+<td>精灵图绝对路径</td>
+</tr>
+<tr>
+<td><code class="notranslate">name</code></td>
+<td>显示名，也是程序内部的纹理 key（可以中文）</td>
+</tr>
+<tr>
+<td><code class="notranslate">states</code></td>
+<td>动作名 → 帧范围（<code class="notranslate">start</code>/<code class="notranslate">end</code> 都是 <strong>1 起始</strong>的帧号）</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>然后还要两件事，程序才知道有这个宠物：</p>
+<ol>
+<li>把它追加进 <code class="notranslate">pet_linker.json</code>（自定义宠物清单）：</li>
+</ol>
+<div class="highlight highlight-source-json"><pre class="notranslate">[<span class="pl-s"><span class="pl-pds">"</span>C:<span class="pl-cce">\\</span>Users<span class="pl-cce">\\</span>&lt;你&gt;<span class="pl-cce">\\</span>AppData<span class="pl-cce">\\</span>Roaming<span class="pl-cce">\\</span>WindowPet<span class="pl-cce">\\</span>custom-pets<span class="pl-cce">\\</span>angel_pet.json<span class="pl-pds">"</span></span>]</pre></div>
+<ol start="2">
+<li>把它放进 <code class="notranslate">pets.json</code> 的 <code class="notranslate">app</code> 数组，并给一个 <code class="notranslate">id</code> 和 <code class="notranslate">type: "custom"</code>——这一步等价于在「宠物商店」里点「添加」：</li>
+</ol>
+<div class="highlight highlight-source-json"><pre class="notranslate">{ <span class="pl-ent">"app"</span>: [ { <span class="pl-ii">...宠物对象..., "id": "a1b2c3d4-0000-0000-0000-000000000001", "type": "custom" </span>} ] }</pre></div>
+<p>改完 <code class="notranslate">settings.json</code>/<code class="notranslate">pets.json</code> 都要<strong>重启程序</strong>（这些文件是启动时读的）。</p>
+<h3>4.3 动作状态怎么配</h3>
+<p>WindowPet 的场景里会用到这些状态：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>状态</th>
+<th>什么时候播</th>
+<th>我的配置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="notranslate">walk</code></td>
+<td>来回走动</td>
+<td>1~4（4 帧循环）</td>
+</tr>
+<tr>
+<td><code class="notranslate">idle</code> / <code class="notranslate">stand</code></td>
+<td>站着不动</td>
+<td>5（站立帧）</td>
+</tr>
+<tr>
+<td><code class="notranslate">jump</code> / <code class="notranslate">fall</code> / <code class="notranslate">bounce</code></td>
+<td>跳/落</td>
+<td>2（抬脚、翅膀上扬的帧，看起来像腾空）</td>
+</tr>
+<tr>
+<td><code class="notranslate">drag</code></td>
+<td>被鼠标拖动</td>
+<td>5</td>
+</tr>
+<tr>
+<td><code class="notranslate">sit</code> / <code class="notranslate">crawl</code> / <code class="notranslate">climb</code></td>
+<td>坐/爬/攀爬</td>
+<td>5（没有专门帧就复用站立）</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<blockquote>
+<p>注意：<strong>缺失某个状态不会崩</strong>，但如果你只配了 <code class="notranslate">idle</code>，场景切到 <code class="notranslate">fall</code>/<code class="notranslate">climb</code> 时动画会播不出来。保险做法是十个状态全写上，指向已有的帧。</p>
+</blockquote>
+<hr>
+<h2>五、调试实录：高 DPI 下桌宠"消失"了</h2>
+<p>这是这次最花时间的问题，值得完整写一遍。</p>
+<h3>5.1 现象</h3>
+<p>装好、配好宠物、程序也在运行（托盘有图标、进程活着、日志显示 <code class="notranslate">Pets scene loaded</code>），<strong>但屏幕上什么都没有</strong>。</p>
+<p>一开始以为是形象包的问题，换了内置宠物——一样看不见。于是做了个对照实验：把宠物换成一张<strong>纯品红色块</strong>（256×256 全填充），然后调 <code class="notranslate">petScale</code>：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th><code class="notranslate">petScale</code></th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.7（默认）</td>
+<td>屏幕上找不到任何品红像素</td>
+</tr>
+<tr>
+<td>2.0</td>
+<td>还是没有</td>
+</tr>
+<tr>
+<td>6.67</td>
+<td>屏幕右侧边缘露出一条品红</td>
+</tr>
+<tr>
+<td>10</td>
+<td>整屏品红</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>结论：<strong>渲染是正常的，但宠物被画在了屏幕可视区域之外</strong>。</p>
+<p>再往下量：我的屏幕是 2560×1600、系统缩放 <strong>150%</strong>（所以 PowerShell 里 <code class="notranslate">SystemInformation.VirtualScreen</code> 只报 1707×1067）。WindowPet 用 <code class="notranslate">window.screen.width/height</code> 决定"舞台"大小，拿到的是 <strong>2560×1600</strong>，而窗口实际可见区域只有 <strong>1707×1067</strong>——舞台比可见区大了 1.5 倍。</p>
+<p>宠物在地面（舞台 y≈1600）走动，而屏幕上只能看到 y&lt;1067，所以全都落在屏幕下方；只有爬墙的宠物偶尔会从边缘露出来一点。</p>
+<h3>5.2 试过但没用的办法</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>尝试</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>兼容性 → 替代高 DPI 缩放行为（DPI 不感知）</td>
+<td>无效（进程 DPI 感知等级确实变成 0 了，仍不对）</td>
+</tr>
+<tr>
+<td>兼容性 → 系统（增强）缩放</td>
+<td>无效</td>
+</tr>
+<tr>
+<td>外部调用 <code class="notranslate">SetWindowPos</code> 触发 resize 事件</td>
+<td>无效（Phaser 的舞台尺寸来自 <code class="notranslate">screen</code>，不是窗口尺寸）</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>因为程序把 <code class="notranslate">window.screen</code> 写死在初始化里，属于程序自身的 DPI 适配 bug，不动源码改不了。</p>
+<h3>5.3 解决办法</h3>
+<p>把系统缩放临时改成 <strong>100%</strong>（设置 → 系统 → 显示 → 缩放），此时窗口可见区域 = 2560×1600 = 舞台尺寸，宠物立刻正常出现在屏幕底部。</p>
+<p>代价是屏幕上其他 UI 变小；如果只是偶尔用，改回来再改过去就行（我最后就是保持在 100% 用的）。</p>
+<blockquote>
+<p>如果你也遇到"桌宠程序在跑但看不见"，先做三件事：<br>
+① 托盘右键 → <strong>显示</strong>（Show）；<br>
+② 看「我的宠物」是不是空的（空的话程序会自动关掉桌宠层并弹提示）；<br>
+③ 用一个高对比度的测试图 + 放大 <code class="notranslate">petScale</code> 验证是不是被画到屏幕外了。</p>
+</blockquote>
+<hr>
+<h2>六、动画调优：从"左右晃"到"真走路"</h2>
+<p>装上之后第一版走路很难看，这里记录两次迭代，给后来人避坑。</p>
+<h3>第一版：整图位移</h3>
+<p>只有 5 帧，做法是把整张立绘按不同角度旋转 + 上下平移——本质是"晃"，脚没动，像贴纸在抖。</p>
+<h3>第二版：局部重绘腿</h3>
+<p>用 SD 的局部重绘（inpaint）只重画腿部，帧序是「分开 → 并拢 → 分开 → 并拢」。比第一版好，但两个问题：</p>
+<ul>
+<li>过渡帧和接触帧几乎一样（脚的位置没变），播放起来像只有 2 帧；</li>
+<li>其中一帧是用"镜像腿部"做的换脚，左右鞋子被翻了个面，走路方向感不对。</li>
+</ul>
+<h3>第三版：参考内置甘雨的 walk</h3>
+<p>拆了内置甘雨的精灵图（<code class="notranslate">Ganyu-xll.png</code>，128 一格，walk 在第 2 行 4 帧），量出它的节奏：脚部横向摆动幅度约帧宽的 27%，帧序「接触–过渡–接触–过渡」，身体几乎不转。</p>
+<p>然后照这个节奏重新生成：</p>
+<ol>
+<li>三个关键腿型：左脚前 / 右脚前 / 并拢（<strong>不镜像</strong>，左右脚用不同提示词分别生成，鞋尖朝向才对）；</li>
+<li>两个过渡帧：一只脚离地向前摆（"passing pose"）；</li>
+<li>合成时<strong>用 alpha 合成</strong>（不是 RGB 贴图）+ 接触帧把腿的下半段向两侧撇开 13px（512 坐标）+ 接触帧身体低 1px / 过渡帧高 2px；</li>
+<li>状态：<code class="notranslate">walk: 1-4</code>，其余用第 5 帧站立、第 2 帧腾空。</li>
+</ol>
+<p>参考帧和最终 5 帧：</p>
+<p>![内置甘雨 walk 的 4 帧参考]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/9d0fad58-1861-472b-ba3c-d2fe5c3e0860"><img width="1596" height="454" alt="07-ganyu-walk-ref" src="https://github.com/user-attachments/assets/9d0fad58-1861-472b-ba3c-d2fe5c3e0860" style="max-width: 100%; height: auto; max-height: 454px;; aspect-ratio: 1596 / 454; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p>![小天使最终 5 帧：接触 → 过渡 → 接触 → 过渡 → 站立]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/539da034-5cbe-4bef-b837-5bf83ec9f064"><img width="1360" height="386" alt="05-sheet-spec" src="https://github.com/user-attachments/assets/539da034-5cbe-4bef-b837-5bf83ec9f064" style="max-width: 100%; height: auto; max-height: 386px;; aspect-ratio: 1360 / 386; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p>![最终精灵图 1280×256]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/ed39dd43-46e5-4d3e-abab-6bc738658efe"><img width="1280" height="256" alt="08-angel-sheet" src="https://github.com/user-attachments/assets/ed39dd43-46e5-4d3e-abab-6bc738658efe" style="max-width: 100%; height: auto; max-height: 256px;; aspect-ratio: 1280 / 256; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p>播放效果（9fps，4 帧循环）：</p>
+<p>![走路循环 GIF]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/45512416-5098-4c7b-93ad-66b603961ea9"><img width="256" height="256" alt="15-walk-loop" src="https://github.com/user-attachments/assets/45512416-5098-4c7b-93ad-66b603961ea9" style="max-width: 100%; height: auto; max-height: 256px;; aspect-ratio: 256 / 256; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<hr>
+<h2>七、备选形象：粉发白翼版</h2>
+<p>同一套流程可以批量产不同形象：我另外跑了一版 <strong>粉发 + 白色大翅膀 + 光环 + 无帽无眼镜</strong> 的天使，只做素材备货，没有装进 WindowPet（桌面上始终只保留戴帽版）。</p>
+<p>![粉发白翼 + 光环的备选天使立绘]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/24888ad9-383a-4f90-a4bf-df77de7f51ee"><img width="512" height="768" alt="13-pink-angel" src="https://github.com/user-attachments/assets/24888ad9-383a-4f90-a4bf-df77de7f51ee" style="max-width: 100%; height: auto; max-height: 768px;; aspect-ratio: 512 / 768; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p>![粉发版的透明立绘 + 原始立绘对照]</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/3e00afd4-f716-4ce8-916e-c7234692bc8a"><img width="572" height="424" alt="14-pink-preview" src="https://github.com/user-attachments/assets/3e00afd4-f716-4ce8-916e-c7234692bc8a" style="max-width: 100%; height: auto; max-height: 424px;; aspect-ratio: 572 / 424; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p>想换的时候：把它的精灵图放进 <code class="notranslate">assets\</code>，改 <code class="notranslate">custom-pets\*.json</code> 的 <code class="notranslate">imageSrc</code> 和 <code class="notranslate">states</code>，重启即可；或者在「宠物商店」里再添加一只。</p>
+<hr>
+<h2>八、清理与卸载</h2>
+<ul>
+<li><strong>卸载</strong>：运行 <code class="notranslate">F:\WindowPet\app\uninstall.exe</code>（或设置 → 应用 → WindowPet）；</li>
+<li><strong>配置</strong>不会被自动删：删掉 <code class="notranslate">%APPDATA%\WindowPet\</code> 才算彻底清理（里面有自定义宠物、设置、日志）；</li>
+<li><strong>关闭开机自启</strong>：托盘 → 设置 → 关掉开关，或删掉注册表 <code class="notranslate">HKCU\...\Run</code> 里的 <code class="notranslate">WindowPet</code> 值；</li>
+<li><strong>日志</strong>：<code class="notranslate">%APPDATA%\WindowPet\WindowPet.log</code>，排查启动问题时先看它（<code class="notranslate">app started</code>、<code class="notranslate">Pets scene loaded</code>、报错都在这里）。</li>
+</ul>
+<hr>
+<h2>九、完整流程回顾</h2>
+<pre lang="text" class="notranslate"><code class="notranslate">照片 → [SD 生图: 绘世/WebUI] → 原始立绘
+     → [抠图: 逐行估背景 + 连通域] → 透明立绘 256×256
+     → [局部重绘 + 合成] → frames/01..05.png
+     → [拼图脚本] → 精灵图 1280×256 + angel_pet.json
+     → [WindowPet] → assets/angel_pet.png + custom-pets/angel_pet.json + pet_linker.json + pets.json
+     → [重启程序] → 桌面上的小天使 🎉
+</code></pre>
+<p>几个关键参数备忘：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>项目</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>精灵图</td>
+<td>1280×256，5 帧 × 256×256，RGBA</td>
+</tr>
+<tr>
+<td>帧尺寸 <code class="notranslate">frameSize</code></td>
+<td>256</td>
+</tr>
+<tr>
+<td>动作</td>
+<td><code class="notranslate">walk: 1-4</code>，<code class="notranslate">idle/stand/sit/drag/crawl/climb: 5</code>，<code class="notranslate">jump/fall/bounce: 2</code></td>
+</tr>
+<tr>
+<td>显示缩放</td>
+<td><strong>系统 100%</strong>（150% 下会跑到屏幕外）</td>
+</tr>
+<tr>
+<td>播放帧率</td>
+<td>程序内置 9fps（约 0.44 秒一个走路循环）</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>整条链路里最容易翻车的其实不是工具，而是<strong>一致性</strong>和<strong>环境</strong>：形象要一致（固定 seed、只改局部）、动作要一致（参考真实样本的帧序和幅度）、环境要一致（高 DPI 缩放、模型/tokenizer 的下载）。把这三件事按坐标系量清楚，剩下的都是体力活。</p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://HU-SHD.github.io/shihaodong.github.io">石浩东的个人博客</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","HU-SHD/shihaodong.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>
