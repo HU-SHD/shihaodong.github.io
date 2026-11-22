@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/218474709?v=4&size=64"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="tips：最近因为某hs某性别的用户把梁圣的算力都给干崩溃了，左手国家电网右手A股股市的梁天帝都被斩于马下，被迫将Deepseek网页版限额且限制7天不活跃对话停止继续……为了活命不多说了，我是个贪生怕死一贫如洗长得又丑还没人喜欢的肥宅，请不要把我挂到小某书上去……
+
+先交代背景：在 WorkBuddy 里配 OpenCode Go——填了 Base URL、贴了 API Key、模型写 `deepseek-v4.1-flash`，点「测试连接」。">
+<meta property="og:title" content="失败反思：以workbuddy与opencodego兼容失败为案例复盘服务器兼容和鉴权">
+<meta property="og:description" content="tips：最近因为某hs某性别的用户把梁圣的算力都给干崩溃了，左手国家电网右手A股股市的梁天帝都被斩于马下，被迫将Deepseek网页版限额且限制7天不活跃对话停止继续……为了活命不多说了，我是个贪生怕死一贫如洗长得又丑还没人喜欢的肥宅，请不要把我挂到小某书上去……
+
+先交代背景：在 WorkBuddy 里配 OpenCode Go——填了 Base URL、贴了 API Key、模型写 `deepseek-v4.1-flash`，点「测试连接」。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://HU-SHD.github.io/shihaodong.github.io/post/shi-bai-fan-si-%EF%BC%9A-yi-workbuddy-yu-opencodego-jian-rong-shi-bai-wei-an-li-fu-pan-fu-wu-qi-jian-rong-he-jian-quan.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/218474709?v=4&size=64">
+<title>失败反思：以workbuddy与opencodego兼容失败为案例复盘服务器兼容和鉴权</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">失败反思：以workbuddy与opencodego兼容失败为案例复盘服务器兼容和鉴权</h1>
+<div class="title-right">
+    <a href="https://HU-SHD.github.io/shihaodong.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/HU-SHD/shihaodong.github.io/issues/14" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p>tips：最近因为某hs某性别的用户把梁圣的算力都给干崩溃了，左手国家电网右手A股股市的梁天帝都被斩于马下，被迫将Deepseek网页版限额且限制7天不活跃对话停止继续……为了活命不多说了，我是个贪生怕死一贫如洗长得又丑还没人喜欢的肥宅，请不要把我挂到小某书上去……</p>
+<p>先交代背景：在 WorkBuddy 里配 OpenCode Go——填了 Base URL、贴了 API Key、模型写 <code class="notranslate">deepseek-v4.1-flash</code>，点「测试连接」。</p>
+<p>第一版提示<strong>连接失败</strong>。补上 <code class="notranslate">/chat/completions</code> 再试，还是失败。中间还踩了个纯拼写坑——<code class="notranslate">completions</code> 手滑写成了 <code class="notranslate">complement</code>。等地址真的改对，提示变成了**「模型服务拒绝了测试请求」**。</p>
+<p>有意思的是：<strong>每次报错都长得很像，但三次失败根本不在同一层。</strong></p>
+<p>这篇短博客借这个案例，把「服务器鉴权」和「服务器兼容性」拆开讲清楚，再看两个正面例子：OpenCode 怎么把契约写成文档，DSH（DeepSeek Harness）怎么把契约写成配置。</p>
+<hr>
+<h2>一、先把两个概念分开</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th></th>
+<th>服务器鉴权（Authentication / Authorization）</th>
+<th>服务器兼容性（Compatibility）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>回答的问题</td>
+<td>你是谁？你配不配用？</td>
+<td>你说的话我听不听得懂？</td>
+</tr>
+<tr>
+<td>典型返回</td>
+<td><code class="notranslate">401</code>、<code class="notranslate">403</code></td>
+<td><code class="notranslate">400</code>、<code class="notranslate">404</code>、<code class="notranslate">415</code>、业务错误码</td>
+</tr>
+<tr>
+<td>出错原因</td>
+<td>Key 错、过期、被撤销、套餐不含该模型、地区限制</td>
+<td>路径不对、请求体字段方言不同、少了必需 header、协议选错</td>
+</tr>
+<tr>
+<td>谁能修</td>
+<td>换 Key / 提权限</td>
+<td>改客户端或换端点</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>一句话：<strong>鉴权是查身份证，兼容性是对暗号。</strong></p>
+<p>大多数「连不上模型」的求助，卡点在于这两件事被混成了一个词——「连接失败」。客户端只给一句含糊提示，用户就只能在界面上反复换 URL、开关功能，猜哪一格填错了。</p>
+<p>所以排查的第一步不是改配置，是<strong>让服务器把话说清楚</strong>。</p>
+<hr>
+<h2>二、用 curl 把边界试出来</h2>
+<p>WorkBuddy 能不能连上先放一边，直接问 OpenCode Go 的网关。发三种请求，看服务器怎么回答（实测，已脱敏）：</p>
+<p><strong>① 不带会话头</strong></p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">curl -sS https://opencode.ai/inference/go/openai/v1/chat/completions \
+  -H <span class="pl-s"><span class="pl-pds">"</span>Content-Type: application/json<span class="pl-pds">"</span></span> \
+  -d <span class="pl-s"><span class="pl-pds">'</span>{"model":"deepseek-v4.1-flash","messages":[{"role":"user","content":"ping"}],"max_tokens":8}<span class="pl-pds">'</span></span></pre></div>
+<div class="highlight highlight-source-json"><pre class="notranslate">{<span class="pl-ent">"type"</span>:<span class="pl-s"><span class="pl-pds">"</span>error<span class="pl-pds">"</span></span>,<span class="pl-ent">"error"</span>:{<span class="pl-ent">"type"</span>:<span class="pl-s"><span class="pl-pds">"</span>MissingSessionID<span class="pl-pds">"</span></span>,
+ <span class="pl-ent">"message"</span>:<span class="pl-s"><span class="pl-pds">"</span>Request is missing x-opencode-session and cannot be routed efficiently. ...<span class="pl-pds">"</span></span>}}</pre></div>
+<p><code class="notranslate">HTTP 400</code>。注意：<strong>连 Key 都还没校验</strong>。网关先判断请求能不能被路由，缺 <code class="notranslate">x-opencode-session</code> 直接打回。</p>
+<p><strong>② 带上会话头，但不带 Key</strong></p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">curl -sS ... \
+  -H <span class="pl-s"><span class="pl-pds">"</span>x-opencode-session: session-123<span class="pl-pds">"</span></span> \
+  -H <span class="pl-s"><span class="pl-pds">"</span>Content-Type: application/json<span class="pl-pds">"</span></span> \
+  -d <span class="pl-s"><span class="pl-pds">'</span>{...}<span class="pl-pds">'</span></span></pre></div>
+<div class="highlight highlight-source-json"><pre class="notranslate">{<span class="pl-ent">"error"</span>:{<span class="pl-ent">"type"</span>:<span class="pl-s"><span class="pl-pds">"</span>authentication_error<span class="pl-pds">"</span></span>,<span class="pl-ent">"message"</span>:<span class="pl-s"><span class="pl-pds">"</span>OpenCode Go requires an API key<span class="pl-pds">"</span></span>}}</pre></div>
+<p><code class="notranslate">HTTP 401</code>。兼容性这一关过了，现在才轮到鉴权。</p>
+<p><strong>③ 带会话头，Key 是假的</strong></p>
+<div class="highlight highlight-source-json"><pre class="notranslate">{<span class="pl-ent">"error"</span>:{<span class="pl-ent">"type"</span>:<span class="pl-s"><span class="pl-pds">"</span>authentication_error<span class="pl-pds">"</span></span>,<span class="pl-ent">"message"</span>:<span class="pl-s"><span class="pl-pds">"</span>Invalid credential<span class="pl-pds">"</span></span>}}</pre></div>
+<p><code class="notranslate">HTTP 401</code>。服务器认出了「这是一次带凭据的请求」，只是凭据无效。</p>
+<p>把三种回答放在一起，边界非常干净：</p>
+<ul>
+<li><strong>400 / <code class="notranslate">MissingSessionID</code> → 兼容性问题</strong>：请求形态不符合网关约定；</li>
+<li><strong>401 / <code class="notranslate">requires an API key</code> → 鉴权缺失</strong>：没带凭据；</li>
+<li><strong>401 / <code class="notranslate">Invalid credential</code> → 鉴权失败</strong>：凭据不对；</li>
+<li><strong>200 → 通了</strong>，此时任何失败都只可能出在客户端。</li>
+</ul>
+<p>顺带一个容易被忽略的事实：<code class="notranslate">GET .../v1/models</code> <strong>不带 Key 也返回 200</strong>。列模型是公开的，鉴权只发生在真正生成的那一刻。所以「模型列表能拉、但对话报错」并不矛盾。</p>
+<hr>
+<h2>三、WorkBuddy 到底卡在哪</h2>
+<p>回头看那道表单：<strong>接口地址 + API Key + 模型名</strong>，再加几个功能开关（工具调用、图片输入、自定义协议）。</p>
+<p>它能表达的东西就这么多。而 OpenCode Go 这类网关的契约至少有三层：</p>
+<ol>
+<li><strong>路由层</strong>：请求必须携带稳定的会话标识，网关才能做路由和 prompt 缓存——对没有原生头的通用客户端来说，就是 <code class="notranslate">x-opencode-session</code>；</li>
+<li><strong>协议层</strong>：每个模型有自己的「母语」端点。文档里写得很清楚——<code class="notranslate">gpt-6-luna</code> 走 <code class="notranslate">/openai/v1/responses</code>，<code class="notranslate">claude-haiku-5-5</code> 走 <code class="notranslate">/anthropic/v1/messages</code>，<code class="notranslate">gemini-4-argon</code> 走 <code class="notranslate">/google/v1beta/...</code>，而 <code class="notranslate">deepseek-v4.1-flash</code> 这类走 <code class="notranslate">/openai/v1/chat/completions</code>；</li>
+<li><strong>请求体方言层</strong>：即便都叫「OpenAI 兼容」，<code class="notranslate">store</code>、<code class="notranslate">developer</code> 角色、<code class="notranslate">max_tokens</code> 还是 <code class="notranslate">max_completion_tokens</code>、思考字段怎么传，各家仍有差异。</li>
+</ol>
+<p>一个通用客户端，表单里没有「我发哪种协议」「我会不会补会话头」的位置；如果它默认不发 <code class="notranslate">x-opencode-session</code>，请求就永远停在第一层，用户看到的却只是一句「连接失败」。</p>
+<p><strong>「OpenAI 兼容」只等于大方向对，不等于字段级对。</strong> 这是整件事最值得记住的一句。</p>
+<hr>
+<h2>四、正面例子一：OpenCode 把契约写成了文档</h2>
+<p>同一个服务，换个角度看，OpenCode 的做法几乎是把答案摊开给你：</p>
+<ul>
+<li><strong>Endpoints 表</strong>逐模型列出 Model ID、native 端点、对应的 AI SDK 包名；</li>
+<li><strong>Base URLs</strong> 全列：<code class="notranslate">/openai/v1</code>、<code class="notranslate">/openai/v1/responses</code>、<code class="notranslate">/anthropic/v1/messages</code>、<code class="notranslate">/google/v1beta</code>；</li>
+<li><strong>客户端要求</strong>写得直白：用自己的 User-Agent 表明身份，并为每段对话发送稳定的 session ID；</li>
+<li>最狠的是两张表：<strong>Validated clients</strong> 和 <strong>Known problematic clients</strong>。哪个客户端、哪个版本、缺什么、对应哪个 PR/issue，全部公开。</li>
+</ul>
+<p>其中一行写着 DeepSeek Harness：会话信息在部分模型路径上有、部分没有；服务端认它的原生头，剩下的适配仍在推进，附了讨论链接。</p>
+<p>鉴权这一侧同样干净：错误体直接按 <code class="notranslate">type</code> 分开——<code class="notranslate">MissingSessionID</code> 是路由/兼容性问题，<code class="notranslate">authentication_error</code> 才是凭据问题。<strong>服务器主动把「哪一层错了」告诉客户端</strong>，这本身就是一种兼容性设计。</p>
+<p>这件事的价值在于：<strong>兼容性变成了可声明、可追踪、可复现的状态</strong>，而不是让用户自己猜。文档敢把自己产品的「已知问题」列出来，恰恰说明这是被当作工程问题管理的。</p>
+<hr>
+<h2>五、正面例子二：DSH 把契约写成了配置项</h2>
+<p>DSH 这边是客户端视角。它的做法不是「写死一套 OpenAI 逻辑」，而是把差异建模成数据：</p>
+<p><strong>每个提供商声明自己的鉴权方式。</strong> 目录里 OpenCode Go 这一条大致是：</p>
+<div class="highlight highlight-source-js"><pre class="notranslate"><span class="pl-en">createProvider</span><span class="pl-kos">(</span><span class="pl-kos">{</span>
+  <span class="pl-c1">id</span>: <span class="pl-s">"opencode-go"</span><span class="pl-kos">,</span>
+  <span class="pl-c1">name</span>: <span class="pl-s">"OpenCode Go"</span><span class="pl-kos">,</span>
+  <span class="pl-c1">auth</span>: <span class="pl-kos">{</span> <span class="pl-c1">apiKey</span>: <span class="pl-en">envApiKeyAuth</span><span class="pl-kos">(</span><span class="pl-s">"OpenCode API key"</span><span class="pl-kos">,</span> <span class="pl-kos">[</span><span class="pl-s">"OPENCODE_API_KEY"</span><span class="pl-kos">]</span><span class="pl-kos">)</span> <span class="pl-kos">}</span><span class="pl-kos">,</span>
+  <span class="pl-c1">models</span>: <span class="pl-c1">OPENCODE_GO_MODELS</span><span class="pl-kos">,</span>
+  <span class="pl-c1">api</span>: <span class="pl-kos">{</span> <span class="pl-c">/* 三种协议各一个适配器 */</span> <span class="pl-kos">}</span><span class="pl-kos">,</span>
+<span class="pl-kos">}</span><span class="pl-kos">)</span></pre></div>
+<p>于是「用哪个环境变量、密钥存哪」是元数据，不是散落的 if；密钥只写保存，不会回显。</p>
+<p><strong>每个模型自带协议和基地址。</strong> 目录数据长这样：</p>
+<div class="highlight highlight-source-json"><pre class="notranslate"><span class="pl-ent">"chat:deepseek-v4.1-flash"</span>: {
+  <span class="pl-ent">"api"</span>: <span class="pl-s"><span class="pl-pds">"</span>openai-completions<span class="pl-pds">"</span></span>,
+  <span class="pl-ent">"baseUrl"</span>: <span class="pl-s"><span class="pl-pds">"</span>https://opencode.ai/zen/go/v1<span class="pl-pds">"</span></span>,
+  <span class="pl-ii">...</span>
+},
+<span class="pl-ent">"chat:minimax-m3"</span>: {
+  <span class="pl-ent">"api"</span>: <span class="pl-s"><span class="pl-pds">"</span>anthropic-messages<span class="pl-pds">"</span></span>,
+  <span class="pl-ent">"baseUrl"</span>: <span class="pl-s"><span class="pl-pds">"</span>https://opencode.ai/zen/go<span class="pl-pds">"</span></span>,
+  <span class="pl-ii">...</span>
+}</pre></div>
+<p>同一个提供商下，不同模型走不同协议、不同基地址——这是数据，不是代码分支。DSH 界面上「自定义模型 API」里让你三选一协议（OpenAI Chat Completions / OpenAI Responses / Anthropic Messages），同一套抽象也照顾到了自建网关。</p>
+<p><strong>兼容性差异有细粒度开关。</strong> 上面那个 DeepSeek 模型还带一组 <code class="notranslate">compat</code>：不支持 <code class="notranslate">store</code>、不支持 <code class="notranslate">developer</code> 角色、<code class="notranslate">max_tokens</code> 走哪个字段、思考格式叫什么……都是逐模型的显式声明。</p>
+<p><strong>会缺的 header 由适配器补。</strong> DSH 专门有一段 OpenCode 适配：</p>
+<div class="highlight highlight-source-js"><pre class="notranslate"><span class="pl-k">const</span> <span class="pl-c1">OPENCODE_SESSION_HEADER</span> <span class="pl-c1">=</span> <span class="pl-s">"x-opencode-session"</span><span class="pl-kos">;</span>
+<span class="pl-c">// 在 API 分发前，为每次会话补上路由所需的会话头</span></pre></div>
+<p>这正是这类通用客户端最容易缺的一层。</p>
+<p>也要说句公道话：OpenCode 文档里 DSH 仍挂在 Known problematic 一栏，说明这件事没有「一次做完」，需要持续跟进。<strong>但能被写进文档、能定位到具体适配器，就已经是可控的工程问题了。</strong></p>
+<hr>
+<h2>六、照着做的排查顺序</h2>
+<ol>
+<li><strong>先 curl，别先改界面。</strong> 用可复现的最小请求问服务器，拿到真实状态码和错误 <code class="notranslate">type</code>。</li>
+<li><strong>按状态码分层。</strong> <code class="notranslate">400/404/415</code> 看兼容性；<code class="notranslate">401/403</code> 看鉴权；<code class="notranslate">200</code> 才轮到怀疑客户端。</li>
+<li><strong>对照文档选端点。</strong> 别默认所有模型都走 <code class="notranslate">/chat/completions</code>，先查 model → native endpoint 表。</li>
+<li><strong>客户端填不下的，用代理补。</strong> 缺 header 这类问题，本机一个小代理转发并补头，往往比换客户端快。</li>
+<li><strong>把结论写回去。</strong> 提 issue、补文档。兼容性问题不写下来，下一个人还要重走一遍。</li>
+</ol>
+<hr>
+<h2>结语</h2>
+<p>WorkBuddy 的那个案例，表面是「URL 少写了一段」，本质是<strong>客户端和网关之间不兼容</strong>：网关要求的东西（会话头、协议、字段方言），客户端的表单里没有对应的表达位置，只能失败在某一层，然后吐一句「连接失败」。</p>
+<p>OpenCode 把契约定在文档和错误码里，DSH 把契约定在 provider 配置和适配器里。它们不靠猜，靠声明。</p>
+<p>所以「兼容」这两个字，从来不是一句营销词。它是一份双方都要签的接口协议——<strong>签了，才叫兼容；没签，只能叫运气好。</strong></p>
+<hr>
+<p><em>参考资料：OpenCode Go 文档（<a href="https://opencode.ai/docs/console/go/" rel="nofollow">https://opencode.ai/docs/console/go/</a>）——Endpoints、Validated clients、Known problematic clients 均出自该页；文中 400/401 返回可自行用 curl 复现，模型清单见 <code class="notranslate">https://opencode.ai/inference/go/v1/models</code>。DSH 侧实现细节取自本机安装包中的 provider 目录与 OpenCode 适配器源码。</em></p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://HU-SHD.github.io/shihaodong.github.io">石浩东的个人博客</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","HU-SHD/shihaodong.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>
